@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bộ giao diện học tập - Lượt 1</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #1f2937 0%, #020617 70%);
+        color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+      }
+
+      main {
+        width: min(1200px, 100%);
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+        gap: 32px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 28px;
+        padding: 32px;
+        box-shadow:
+          0 20px 70px rgba(2, 6, 23, 0.7),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+
+      @media (max-width: 960px) {
+        body {
+          padding: 16px;
+        }
+        main {
+          grid-template-columns: 1fr;
+          padding: 24px;
+        }
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+      }
+
+      .viewer {
+        position: relative;
+        border-radius: 24px;
+        background: linear-gradient(135deg, rgba(15, 118, 255, 0.15), rgba(147, 51, 234, 0.15));
+        padding: 32px 20px;
+        min-height: 520px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .interface-frame {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .interface-frame.is-active {
+        display: flex;
+        animation: fadeIn 280ms ease forwards;
+      }
+
+      .interface-frame img {
+        width: min(380px, 90vw);
+        height: auto;
+        border-radius: 32px;
+        box-shadow:
+          0 20px 60px rgba(15, 23, 42, 0.7),
+          0 0 0 1px rgba(226, 232, 240, 0.08);
+      }
+
+      .interface-meta {
+        font-size: 0.95rem;
+        color: #cbd5f5;
+        letter-spacing: 0.02em;
+      }
+
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .controls p {
+        margin: 0;
+        color: #94a3b8;
+      }
+
+      .button-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+
+      button {
+        cursor: pointer;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        border-radius: 999px;
+        padding: 14px 18px;
+        background: rgba(15, 23, 42, 0.6);
+        color: inherit;
+        font-size: 0.95rem;
+        line-height: 1.2;
+        transition: all 180ms ease;
+      }
+
+      button:hover {
+        border-color: rgba(248, 250, 252, 0.8);
+        color: #f8fafc;
+      }
+
+      button.is-active {
+        background: linear-gradient(120deg, #38bdf8, #a855f7);
+        border-color: transparent;
+        color: #0f172a;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(56, 189, 248, 0.35);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px) scale(0.995);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="viewer" aria-live="polite">
+        <div class="interface-frame is-active" id="screen-01">
+          <img src="01_Khởi động.png" alt="Giao diện 01 - Khởi động" loading="lazy" />
+          <div class="interface-meta">01 · Khởi động</div>
+        </div>
+        <div class="interface-frame" id="screen-02">
+          <img src="02_Giới thiệu-01.png" alt="Giao diện 02 - Giới thiệu 01" loading="lazy" />
+          <div class="interface-meta">02 · Giới thiệu 01</div>
+        </div>
+        <div class="interface-frame" id="screen-03">
+          <img src="03_Giới thiệu-02.png" alt="Giao diện 03 - Giới thiệu 02" loading="lazy" />
+          <div class="interface-meta">03 · Giới thiệu 02</div>
+        </div>
+        <div class="interface-frame" id="screen-04">
+          <img src="04_Giới thiệu-03.png" alt="Giao diện 04 - Giới thiệu 03" loading="lazy" />
+          <div class="interface-meta">04 · Giới thiệu 03</div>
+        </div>
+        <div class="interface-frame" id="screen-05">
+          <img src="05_Màn hình truy cập.png" alt="Giao diện 05 - Màn hình truy cập" loading="lazy" />
+          <div class="interface-meta">05 · Màn hình truy cập</div>
+        </div>
+      </section>
+
+      <section class="controls">
+        <h1>Lượt 1 · 5 giao diện đầu tiên</h1>
+        <p>Chạm vào một nút để chuyển nhanh giữa các giao diện PNG đã được cắt từ bản thiết kế gốc.</p>
+        <div class="button-grid" role="tablist" aria-label="Chọn giao diện">
+          <button type="button" class="is-active" data-target="screen-01">01 · Khởi động</button>
+          <button type="button" data-target="screen-02">02 · Giới thiệu 01</button>
+          <button type="button" data-target="screen-03">03 · Giới thiệu 02</button>
+          <button type="button" data-target="screen-04">04 · Giới thiệu 03</button>
+          <button type="button" data-target="screen-05">05 · Màn hình truy cập</button>
+        </div>
+        <p style="font-size: 0.85rem; color: #94a3b8;">Các giao diện tiếp theo sẽ được ghép vào cùng trang ở các lượt tiếp theo.</p>
+      </section>
+    </main>
+
+    <script>
+      const buttons = document.querySelectorAll('button[data-target]');
+      const frames = document.querySelectorAll('.interface-frame');
+
+      const setActive = (targetId) => {
+        frames.forEach((frame) => {
+          frame.classList.toggle('is-active', frame.id === targetId);
+        });
+
+        buttons.forEach((button) => {
+          button.classList.toggle('is-active', button.dataset.target === targetId);
+        });
+      };
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          setActive(button.dataset.target);
+        });
+      });
+    </script>
+  </body>
+</html>
