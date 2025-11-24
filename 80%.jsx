@@ -70,9 +70,16 @@ function modifyProjectLayers(config) {
             return firstPart + "\r" + secondPart;
         } 
         
-        // Chế độ: Ngắt tại khoảng trắng đầu tiên
+        // Chế độ: Ngắt tại khoảng trắng với lựa chọn vị trí
         else if (lineBreakConfig.mode === "space") {
-            var spaceIndex = text.indexOf(' ');
+            var targetOccurrence = (lineBreakConfig.spaceOccurrence === 2) ? 2 : 1;
+            var spaceIndex = -1;
+            var searchStart = 0;
+            for (var occurrence = 0; occurrence < targetOccurrence; occurrence++) {
+                spaceIndex = text.indexOf(' ', searchStart);
+                if (spaceIndex === -1) { break; }
+                searchStart = spaceIndex + 1;
+            }
             if (spaceIndex === -1) { return text; }
             var firstPart = text.substring(0, spaceIndex).replace(/^\s+|\s+$/g, '');
             var secondPart = text.substring(spaceIndex + 1).replace(/^\s+|\s+$/g, '');
@@ -221,6 +228,13 @@ function modifyProjectLayers(config) {
     var breakModeSpaceRb = breakModeGroup.add('radiobutton', undefined, 'Ngắt tại Space');
     breakModeRightRb.value = true;
 
+    // Group cho chế độ Ngắt tại Space (chọn vị trí)
+    var spaceOccurrenceGroup = lineBreakOptionsGroup.add('group', undefined);
+    spaceOccurrenceGroup.orientation = 'row';
+    spaceOccurrenceGroup.add('statictext', undefined, 'Vị trí khoảng trắng:');
+    var spaceOccurrenceDropdown = spaceOccurrenceGroup.add('dropdownlist', undefined, ['Đầu tiên', 'Thứ hai']);
+    spaceOccurrenceDropdown.selection = 0;
+
     // Group cho chế độ Ngắt từ Phải
     var breakFromRightGroup = lineBreakOptionsGroup.add('group', undefined);
     breakFromRightGroup.orientation = 'row';
@@ -252,6 +266,7 @@ function modifyProjectLayers(config) {
     // Logic tương tác UI ban đầu
     breakFromLeftGroup.enabled = false;
     breakDelimiterGroup.enabled = false;
+    spaceOccurrenceGroup.enabled = false;
 
     var executeButton = myWindow.add('button', undefined, 'Thực Thi');
     executeButton.alignment = 'center';
@@ -264,22 +279,26 @@ function modifyProjectLayers(config) {
         breakFromRightGroup.enabled = true;
         breakFromLeftGroup.enabled = false;
         breakDelimiterGroup.enabled = false;
+        spaceOccurrenceGroup.enabled = false;
     };
     breakModeLeftRb.onClick = function() {
         breakFromRightGroup.enabled = false;
         breakFromLeftGroup.enabled = true;
         breakDelimiterGroup.enabled = false;
+        spaceOccurrenceGroup.enabled = false;
     };
     breakModeDelimiterRb.onClick = function() {
         breakFromRightGroup.enabled = false;
         breakFromLeftGroup.enabled = false;
         breakDelimiterGroup.enabled = true;
+        spaceOccurrenceGroup.enabled = false;
     };
 
     breakModeSpaceRb.onClick = function() {
         breakFromRightGroup.enabled = false;
         breakFromLeftGroup.enabled = false;
         breakDelimiterGroup.enabled = false;
+        spaceOccurrenceGroup.enabled = true;
     };
     
     // --- HÀM onClick ---
@@ -302,6 +321,7 @@ function modifyProjectLayers(config) {
         var breakFromLeft = parseInt(breakFromLeftEditText.text);
         var breakFromRight = parseInt(breakFromRightEditText.text);
         var breakDelimiter = breakDelimiterEditText.text;
+        var spaceOccurrence = spaceOccurrenceDropdown.selection ? (spaceOccurrenceDropdown.selection.index + 1) : 1;
         var sizeLine1 = parseInt(sizeLine1EditText.text);
         var sizeLine2 = parseInt(sizeLine2EditText.text);
         
@@ -350,6 +370,7 @@ function modifyProjectLayers(config) {
                 fromLeft: breakFromLeft,
                 fromRight: breakFromRight,
                 delimiter: breakDelimiter,
+                spaceOccurrence: spaceOccurrence,
                 size1: sizeLine1,
                 size2: sizeLine2
             }
