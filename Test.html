@@ -279,6 +279,9 @@
         .screen-02__illustration-space {
             flex: 1; /* Chiếm phần lớn không gian giữa */
             min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Nội dung text chính */
@@ -385,6 +388,9 @@
         .screen-03__illustration-space {
             flex: 1;
             min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .screen-03__content {
@@ -429,7 +435,7 @@
 
         /* Sử dụng lại các class layout cũ */
         .screen-04__header { display: flex; justify-content: flex-end; padding: 10px 20px; }
-        .screen-04__illustration-space { flex: 1; min-height: 200px; }
+        .screen-04__illustration-space { flex: 1; min-height: 200px; display: flex; align-items: center; justify-content: center; }
         
         .screen-04__content {
             padding: 0 30px;
@@ -510,6 +516,9 @@
         .screen-05__spacer {
             flex: 1; /* Đẩy nội dung xuống dưới */
             min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .screen-05__content {
@@ -1893,7 +1902,17 @@
             </div>
 
             <!-- Khoảng trống (nơi thường để ảnh minh họa) -->
-            <div class="screen-02__illustration-space"></div>
+            <div class="screen-02__illustration-space">
+                <div class="screen-01__icon">
+                    <div class="screen-01__icon-screen">
+                        <div class="screen-01__play-btn"></div>
+                        <div class="screen-01__loading-bar">
+                            <div class="screen-01__loading-dot"></div>
+                        </div>
+                    </div>
+                    <div class="screen-01__hand"></div>
+                </div>
+            </div>
 
             <!-- Nội dung Text -->
             <div class="screen-02__content">
@@ -1947,7 +1966,17 @@
             </div>
 
             <!-- Khoảng trống -->
-            <div class="screen-03__illustration-space"></div>
+            <div class="screen-03__illustration-space">
+                <div class="screen-01__icon">
+                    <div class="screen-01__icon-screen">
+                        <div class="screen-01__play-btn"></div>
+                        <div class="screen-01__loading-bar">
+                            <div class="screen-01__loading-dot"></div>
+                        </div>
+                    </div>
+                    <div class="screen-01__hand"></div>
+                </div>
+            </div>
 
             <!-- Nội dung Text mới -->
             <div class="screen-03__content">
@@ -2001,7 +2030,17 @@
             </div>
 
             <!-- Khoảng trống -->
-            <div class="screen-04__illustration-space"></div>
+            <div class="screen-04__illustration-space">
+                <div class="screen-01__icon">
+                    <div class="screen-01__icon-screen">
+                        <div class="screen-01__play-btn"></div>
+                        <div class="screen-01__loading-bar">
+                            <div class="screen-01__loading-dot"></div>
+                        </div>
+                    </div>
+                    <div class="screen-01__hand"></div>
+                </div>
+            </div>
 
             <!-- Nội dung Text mới -->
             <div class="screen-04__content">
@@ -2053,7 +2092,17 @@
             </div>
 
             <!-- Khoảng trống lớn phía trên -->
-            <div class="screen-05__spacer"></div>
+            <div class="screen-05__spacer">
+                <div class="screen-01__icon">
+                    <div class="screen-01__icon-screen">
+                        <div class="screen-01__play-btn"></div>
+                        <div class="screen-01__loading-bar">
+                            <div class="screen-01__loading-dot"></div>
+                        </div>
+                    </div>
+                    <div class="screen-01__hand"></div>
+                </div>
+            </div>
 
             <!-- Nội dung chính -->
             <div class="screen-05__content">
