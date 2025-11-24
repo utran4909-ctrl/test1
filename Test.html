@@ -1,0 +1,3916 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telead App Interfaces</title>
+    
+    <!-- Nhúng Font chữ tương tự thiết kế (Nunito cho độ tròn trịa) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           GLOBAL STYLES (KHÔNG SỬA PHẦN NÀY)
+           ========================================= */
+        :root {
+            --phone-width: 375px;
+            --phone-height: 812px; /* Kích thước iPhone X/11/12 Pro */
+            --bg-body: #f0f2f5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        /* Khung điện thoại mô phỏng */
+        .mobile-frame {
+            width: var(--phone-width);
+            height: var(--phone-height);
+            background: white;
+            border-radius: 40px;
+            overflow: hidden; /* Cắt những phần thừa ra ngoài bo góc */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            position: relative;
+            border: 8px solid #1a1a1a; /* Viền đen điện thoại */
+        }
+        .js-enabled .mobile-frame {
+            display: none;
+        }
+        .js-enabled .mobile-frame.is-active {
+            display: block;
+        }
+
+        /* =========================================
+           INTERFACE 1: SPLASH SCREEN STYLES
+           ========================================= */
+        .screen-01 {
+            width: 100%;
+            height: 100%;
+            background-color: #0065FF; /* Màu xanh chủ đạo */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* Phần nền trang trí (Ticket Shape) */
+        .screen-01__bg-shape {
+            position: absolute;
+            width: 300px;
+            height: 500px;
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: rotate(-45deg);
+            border-radius: 20px;
+            z-index: 1;
+        }
+        
+        /* Các bong bóng trang trí (Decorative Circles) */
+        .screen-01__circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            z-index: 1;
+        }
+        .c1 { width: 300px; height: 300px; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; }
+        .c2 { width: 20px; height: 20px; background: rgba(255,255,255,0.3); bottom: 150px; left: 80px; border: none;}
+        .c3 { width: 10px; height: 10px; background: rgba(255,255,255,0.3); bottom: 180px; left: 60px; border: none;}
+        
+         /* Center Content Wrapper */
+         .screen-01__content {
+             position: relative;
+             z-index: 2;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+         }
+         .screen-01__start-btn {
+             margin-top: 40px;
+             padding: 12px 36px;
+             border-radius: 30px;
+             border: none;
+             background: #ffffff;
+             color: #0065FF;
+             font-size: 16px;
+             font-weight: 800;
+             cursor: pointer;
+             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+             transition: transform 0.2s ease, box-shadow 0.2s ease;
+         }
+         .screen-01__start-btn:active {
+             transform: translateY(2px);
+             box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+         }
+
+        /* Icon Tablet vẽ bằng CSS */
+        .screen-01__icon {
+            width: 140px;
+            height: 110px;
+            background: #0056d6; /* Xanh đậm hơn nền */
+            border-radius: 10px;
+            padding: 10px;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .screen-01__icon-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Nút Play */
+        .screen-01__play-btn {
+            width: 40px;
+            height: 40px;
+            background: #0056d6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .screen-01__play-btn::after {
+            content: '';
+            width: 0; 
+            height: 0; 
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid #ffbf00; /* Màu vàng */
+            margin-left: 4px;
+        }
+
+        /* Thanh loading giả bên dưới nút play */
+        .screen-01__loading-bar {
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            right: 20px;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+        }
+        .screen-01__loading-bar::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 30%;
+            background: #ffbf00;
+            border-radius: 2px;
+        }
+        .screen-01__loading-dot {
+            position: absolute;
+            left: 30%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: #ffbf00;
+            border-radius: 50%;
+        }
+
+        /* Bàn tay trỏ (Vẽ đơn giản bằng CSS) */
+        .screen-01__hand {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            background: #e6cba6; /* Màu da */
+            bottom: -15px;
+            right: 40px;
+            border-radius: 20px 20px 5px 5px;
+            transform: rotate(-10deg);
+            border: 2px solid white;
+        }
+        .screen-01__hand::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 5px;
+            width: 12px;
+            height: 25px;
+            background: #e6cba6;
+            border-radius: 10px;
+            border: 2px solid white;
+            border-bottom: none;
+        }
+
+        /* Typography */
+        .screen-01__title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #2c3e50; /* Màu xanh đen đậm của chữ Telead */
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+        
+        .screen-01__subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* =========================================
+           INTERFACE 2: ONBOARDING SCREEN 1 STYLES
+           ========================================= */
+        .screen-02 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF; /* Nền trắng xanh rất nhạt */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            color: #1F2B5B; /* Màu xanh đen đậm của chữ */
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* Status Bar (Giả lập) */
+        .status-bar {
+            width: 100%;
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 20px 10px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+        }
+        .status-icons { display: flex; gap: 5px; align-items: center; }
+        .battery { width: 24px; height: 12px; border: 1px solid #000; border-radius: 3px; position: relative; }
+        .battery::after { content: ''; width: 18px; height: 8px; background: #000; position: absolute; top: 1px; left: 1px; border-radius: 1px; }
+        .wifi { width: 18px; height: 12px; overflow: hidden; position: relative;}
+        .wifi::before { content: ''; width: 20px; height: 20px; border: 2px solid #000; border-radius: 50%; position: absolute; top: -8px; left: -1px; }
+
+        /* Header: Nút Bỏ qua */
+        .screen-02__header {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px 20px;
+        }
+        .btn-skip {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1F2B5B;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Khoảng trống cho hình ảnh minh họa (trong hình bạn gửi là khoảng trắng) */
+        .screen-02__illustration-space {
+            flex: 1; /* Chiếm phần lớn không gian giữa */
+            min-height: 200px;
+        }
+
+        /* Nội dung text chính */
+        .screen-02__content {
+            padding: 0 30px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .screen-02__title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1F2B5B;
+            margin-bottom: 15px;
+        }
+        .screen-02__desc {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #555;
+            font-weight: 600;
+        }
+
+        /* Footer: Pagination & Button */
+        .screen-02__footer {
+            padding: 0 30px 40px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Dấu chấm trang (Pagination) */
+        .pagination {
+            display: flex;
+            gap: 8px;
+        }
+        .dot {
+            height: 8px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .dot.active {
+            width: 24px;
+            background-color: #0065FF; /* Xanh chủ đạo */
+        }
+        .dot.inactive {
+            width: 8px;
+            background-color: #DDE5F0;
+        }
+
+        /* Nút mũi tên tròn (Floating Button) */
+        .btn-next {
+            width: 56px;
+            height: 56px;
+            background-color: #0065FF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0, 101, 255, 0.3);
+            cursor: pointer;
+            border: none;
+        }
+        /* Mũi tên vẽ bằng CSS */
+        .arrow-icon {
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            display: inline-block;
+            padding: 5px;
+            transform: rotate(-45deg);
+            margin-left: -2px; /* Căn chỉnh lại chút cho cân giữa hình tròn */
+        }
+
+        /* Thanh Home Indicator của iPhone */
+        .home-indicator {
+            width: 134px;
+            height: 5px;
+            background: #E0E0E0;
+            border-radius: 100px;
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* =========================================
+           INTERFACE 3: ONBOARDING SCREEN 2 STYLES
+           ========================================= */
+        .screen-03 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF; /* Giữ nguyên màu nền đồng bộ */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            color: #1F2B5B;
+        }
+
+        /* Tận dụng lại các class layout cũ nhưng đổi tên scope để dễ quản lý riêng */
+        .screen-03__header {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px 20px;
+        }
+
+        .screen-03__illustration-space {
+            flex: 1;
+            min-height: 200px;
+        }
+
+        .screen-03__content {
+            padding: 0 30px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .screen-03__title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1F2B5B;
+            margin-bottom: 15px;
+        }
+        
+        .screen-03__desc {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .screen-03__footer {
+            padding: 0 30px 40px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* =========================================
+           INTERFACE 4: ONBOARDING SCREEN 3 STYLES
+           ========================================= */
+        .screen-04 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            color: #1F2B5B;
+        }
+
+        /* Sử dụng lại các class layout cũ */
+        .screen-04__header { display: flex; justify-content: flex-end; padding: 10px 20px; }
+        .screen-04__illustration-space { flex: 1; min-height: 200px; }
+        
+        .screen-04__content {
+            padding: 0 30px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .screen-04__title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1F2B5B;
+            margin-bottom: 15px;
+        }
+        .screen-04__desc {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .screen-04__footer {
+            padding: 0 30px 40px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* NÚT BẤM MỚI: "Bắt đầu" */
+        .btn-get-started {
+            background-color: #0065FF;
+            color: white;
+            border: none;
+            padding: 6px 6px 6px 24px; /* Padding trái nhiều hơn để chữ cách lề */
+            border-radius: 30px; /* Bo tròn dạng viên thuốc */
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 12px; /* Khoảng cách giữa chữ và icon */
+            box-shadow: 0 10px 20px rgba(0, 101, 255, 0.3);
+            cursor: pointer;
+        }
+
+        /* Vòng tròn trắng bên trong nút */
+        .btn-circle-inner {
+            width: 44px;
+            height: 44px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Mũi tên màu xanh (ngược lại với màu trắng ở trên) */
+        .arrow-icon-blue {
+            border: solid #0065FF;
+            border-width: 0 3px 3px 0;
+            display: inline-block;
+            padding: 5px;
+            transform: rotate(-45deg);
+            margin-left: -3px;
+        }
+
+        /* =========================================
+           INTERFACE 5: GET STARTED / LOGIN OPTIONS
+           ========================================= */
+        .screen-05 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            color: #1F2B5B;
+        }
+
+        .screen-05__spacer {
+            flex: 1; /* Đẩy nội dung xuống dưới */
+            min-height: 100px;
+        }
+
+        .screen-05__content {
+            padding: 0 30px 30px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .screen-05__title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: #1F2B5B;
+        }
+
+        /* Social Login Buttons (Google/Apple) */
+        .social-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+            cursor: pointer;
+            /* Căn giữa toàn bộ cụm nút */
+            justify-content: center; 
+            gap: 15px; /* Khoảng cách giữa icon và chữ */
+        }
+
+        .social-icon-box {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #555;
+            /* Để chữ thẳng hàng với icon box */
+            width: 180px; 
+        }
+
+        /* Text Divider (Hoặc) */
+        .divider-text {
+            font-size: 14px;
+            color: #666;
+            font-weight: 700;
+            margin: 20px 0;
+            opacity: 0.8;
+        }
+
+        /* Nút Đăng nhập chính (Full width) */
+         .btn-primary-large {
+             width: 100%;
+             background-color: #0065FF;
+             color: white;
+             border: none;
+             height: 60px;
+             border-radius: 30px;
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
+             padding: 5px 8px 5px 25px; /* Padding để căn chỉnh nội dung */
+             font-size: 16px;
+             font-weight: 700;
+             font-family: 'Nunito', sans-serif;
+             box-shadow: 0 10px 20px rgba(0, 101, 255, 0.3);
+             cursor: pointer;
+             margin-bottom: 25px;
+         }
+         .modal-continue-btn {
+             margin-top: 25px;
+         }
+
+        /* Footer Link */
+        .footer-link-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: #555;
+        }
+        .footer-link-text a {
+            color: #0065FF;
+            text-decoration: underline;
+            margin-left: 5px;
+        }
+
+        /* =========================================
+           INTERFACE 6: SIGN UP SCREEN STYLES
+           ========================================= */
+        .screen-06 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Cho phép cuộn nếu màn hình nhỏ */
+            /* Ẩn thanh cuộn */
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        .screen-06::-webkit-scrollbar { display: none; }
+
+        .screen-06__container {
+            padding: 10px 30px 30px 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER LOGO SECTION */
+        .screen-06__header-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 40px;
+            gap: 10px;
+        }
+        
+        /* Tái sử dụng và thu nhỏ icon từ screen-01 */
+        .logo-small-wrapper {
+            transform: scale(0.45); /* Thu nhỏ icon tablet */
+            width: 65px; /* Chiếm không gian thực tế sau khi thu nhỏ */
+            height: 50px;
+            margin-right: -15px; /* Kéo text lại gần do scale tạo khoảng trống */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .logo-text-main {
+            font-size: 28px;
+            font-weight: 800;
+            color: #2c3e50;
+            line-height: 1;
+        }
+        .logo-text-sub {
+            font-size: 10px;
+            font-weight: 700;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* TITLE SECTION */
+        .screen-06__title-box {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+        .screen-06__heading {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1F2B5B;
+            margin-bottom: 10px;
+        }
+        .screen-06__subheading {
+            font-size: 15px;
+            color: #555;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        /* FORM INPUTS */
+        .input-group {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+        .input-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+        }
+        .input-field {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            font-family: 'Nunito', sans-serif;
+        }
+        .input-field::placeholder { color: #555; opacity: 0.8; font-weight: 700; }
+
+        /* CHECKBOX */
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            cursor: pointer;
+        }
+        .custom-checkbox {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #2ECC71; /* Màu xanh lá */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .checkbox-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #555;
+        }
+
+        /* BUTTON ĐĂNG KÝ (CENTERED) */
+        .btn-signup-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .btn-signup {
+            background-color: #0065FF;
+            color: white;
+            border: none;
+            padding: 6px 6px 6px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 20px rgba(0, 101, 255, 0.3);
+            cursor: pointer;
+            min-width: 200px;
+            justify-content: space-between;
+        }
+
+        /* OR CONTINUE WITH */
+        .or-text {
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .social-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        /* Dùng lại .social-icon-box nhưng thêm hover effect */
+        .social-circle-btn {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+        /* FOOTER */
+        .footer-center {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #555;
+            padding-bottom: 20px;
+        }
+        .footer-center a { color: #0065FF; text-decoration: underline; margin-left: 5px; }
+
+        /* =========================================
+           INTERFACE 7: LOGIN SCREEN STYLES
+           ========================================= */
+        /* Sử dụng cấu trúc nền giống screen-06 */
+        .screen-07 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .screen-07::-webkit-scrollbar { display: none; }
+
+        /* Hàng chứa: Ghi nhớ tôi - Quên mật khẩu */
+        .remember-forgot-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .remember-box {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            gap: 10px;
+        }
+
+        /* Checkbox hình vuông rỗng */
+        .checkbox-square {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #009688; /* Màu xanh ngọc đậm */
+            border-radius: 4px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .remember-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #555;
+        }
+
+        .forgot-pass-link {
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            text-decoration: none;
+        }
+
+        /* =========================================
+           INTERFACE 8: FILL PROFILE STYLES
+           ========================================= */
+        .screen-08 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Cho phép cuộn */
+            scrollbar-width: none;
+        }
+        .screen-08::-webkit-scrollbar { display: none; }
+
+        /* HEADER: Back Button + Title */
+        .header-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .btn-back {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+        .header-title-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1F2B5B;
+        }
+
+        /* AVATAR SECTION */
+        .avatar-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .avatar-circle-placeholder {
+            width: 100px;
+            height: 100px;
+            background-color: #E8F1FF; /* Màu xanh rất nhạt */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            position: relative;
+        }
+        .avatar-edit-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 28px;
+            height: 28px;
+            background-color: #009688; /* Màu xanh ngọc */
+            border-radius: 6px; /* Bo góc vuông nhẹ */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+            cursor: pointer;
+        }
+
+        /* FORM TWEAKS */
+        /* Class hỗ trợ cho Phone Input */
+        .flag-icon {
+            width: 24px;
+            height: 16px;
+            border-radius: 2px;
+            display: block;
+        }
+        .phone-arrow {
+            margin: 0 8px;
+            color: #333;
+        }
+        
+        /* Dropdown style cho ô Giới tính */
+        .dropdown-arrow {
+            margin-left: auto; /* Đẩy mũi tên sang phải cùng */
+            color: #555;
+        }
+
+        /* =========================================
+           INTERFACE 9: CREATE PIN STYLES
+           ========================================= */
+        .screen-09 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Instruction Text */
+        .pin-instruction {
+            text-align: center;
+            padding: 40px 40px 30px 40px;
+            font-size: 15px;
+            color: #555;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        /* PIN Input Boxes */
+        .pin-box-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .pin-box {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            color: #1F2B5B;
+        }
+        /* Style cho ô đang active (focus) */
+        .pin-box.active {
+            border: 1px solid rgba(0,0,0,0.05); /* Viền rất nhạt */
+        }
+        /* Style cho dấu * (dùng font to hơn chút hoặc chỉnh vertical align) */
+        .pin-dot {
+            font-size: 30px;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        /* CUSTOM KEYPAD */
+        .keypad-container {
+            margin-top: auto; /* Đẩy xuống dưới cùng */
+            padding-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            width: 100%;
+            padding: 0 20px;
+            row-gap: 20px;
+        }
+        .keypad-btn {
+            background: transparent;
+            border: none;
+            font-size: 20px; /* Số nhỏ gọn */
+            font-weight: 700;
+            color: #333;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Nunito', sans-serif;
+        }
+        .keypad-btn:active {
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 50%;
+        }
+
+        /* =========================================
+           INTERFACE 10: FINGERPRINT STYLES
+           ========================================= */
+        .screen-10 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Container cho phần hình ảnh vân tay */
+        .scan-wrapper {
+            flex: 1; /* Chiếm toàn bộ khoảng trống giữa */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fingerprint-box {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        /* 4 Góc Scan (Vẽ bằng CSS Borders) */
+        .scan-corner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-color: #1F2B5B; /* Màu xanh đen */
+            border-style: solid;
+            border-width: 4px;
+            border-radius: 12px; /* Bo góc */
+        }
+        /* Cắt bỏ các cạnh không cần thiết để tạo hình chữ L */
+        .top-left { top: 0; left: 0; border-right: none; border-bottom: none; }
+        .top-right { top: 0; right: 0; border-left: none; border-bottom: none; }
+        .bottom-left { bottom: 0; left: 0; border-right: none; border-top: none; }
+        .bottom-right { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+        /* Icon Vân tay SVG sẽ được style trực tiếp fill */
+        
+        .scan-text-bottom {
+            text-align: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: #555;
+            padding: 0 40px;
+            line-height: 1.4;
+        }
+
+        /* FOOTER 2 BUTTONS */
+        .footer-dual-btn {
+            padding: 0 30px 40px 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        /* Nút phụ: Bỏ qua (Màu nhạt) */
+        .btn-secondary {
+            flex: 1; /* Chiếm 1 phần */
+            height: 54px;
+            background-color: #E8F1FF; /* Xanh rất nhạt */
+            color: #1F2B5B;
+            border-radius: 27px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            cursor: pointer;
+        }
+
+        /* Nút chính: Tiếp tục (Màu đậm - Tái sử dụng style nhưng chỉnh width) */
+        .btn-primary-half {
+            flex: 1; /* Chiếm 1 phần */
+            background-color: #0065FF;
+            color: white;
+            border: none;
+            height: 54px;
+            border-radius: 27px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 6px 5px 20px;
+            box-shadow: 0 10px 20px rgba(0, 101, 255, 0.3);
+            cursor: pointer;
+        }
+
+        /* =========================================
+           INTERFACE 11: SUCCESS MODAL STYLES
+           ========================================= */
+        .screen-11 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            position: relative;
+            overflow: hidden; /* Ngăn cuộn khi hiện modal */
+        }
+
+        /* Lớp phủ làm tối màn hình nền */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(31, 43, 91, 0.75); /* Màu xanh đen trong suốt */
+            backdrop-filter: blur(2px); /* Làm mờ nhẹ nền sau (hiệu ứng kính) */
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hộp thoại chính */
+        .success-card {
+            width: 85%;
+            background: white;
+            border-radius: 40px; /* Bo góc rất tròn */
+            padding: 40px 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        /* Phần Avatar Minh họa */
+        .illustration-wrapper {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin-bottom: 20px;
+        }
+        
+        /* Các hạt Confetti trang trí xung quanh */
+        .confetti { position: absolute; }
+        .cf-star { top: 0; right: 0; color: #FFC107; font-size: 20px;}
+        .cf-tri-blue { bottom: 0; left: 0; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 14px solid #1F2B5B; transform: rotate(-15deg);}
+        .cf-tri-green { top: 50%; right: -10px; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 10px solid #009688; transform: rotate(45deg);}
+        .cf-circle-orange { top: 20px; left: -10px; width: 10px; height: 10px; background: #FF5722; border-radius: 50%; }
+        .cf-star-red { top: 60%; left: -20px; color: #FF1744; font-size: 16px;}
+        .cf-dot-brown { top: 40%; right: -15px; width: 8px; height: 8px; background: #795548; border-radius: 50%; }
+
+        /* Typography */
+        .modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1F2B5B;
+            margin-bottom: 15px;
+        }
+        .modal-desc {
+            font-size: 15px;
+            color: #555;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        /* Loading Spinner Animation */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+        .loading-spinner::before {
+            content: '';
+            box-sizing: border-box;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            margin-top: -15px;
+            margin-left: -15px;
+            border-radius: 50%;
+            border: 3px solid #ccc;
+            border-top-color: #1F2B5B; /* Màu chính của spinner */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* =========================================
+           INTERFACE 12: FORGOT PASSWORD SELECTION
+           ========================================= */
+        .screen-12 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Instruction Text (Dùng style riêng cho màn này vì căn giữa) */
+        .forgot-instruction {
+            text-align: center;
+            padding: 0 40px;
+            font-size: 15px;
+            color: #555;
+            font-weight: 700; /* Đậm hơn chút so với màn trước */
+            line-height: 1.5;
+            margin-top: 150px; /* Đẩy xuống giữa màn hình giống thiết kế */
+            margin-bottom: 30px;
+        }
+
+        /* Contact Option Card */
+        .contact-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            cursor: pointer;
+            border: 2px solid transparent; /* Dự phòng cho trạng thái active */
+            transition: all 0.2s;
+        }
+        .contact-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        /* Giả lập thẻ đầu tiên đang được focus/active nếu cần */
+        .contact-card.active {
+            border-color: #009688; 
+            background-color: #fafffe;
+        }
+
+        /* Icon Circle (Teal Color) */
+        .icon-circle-teal {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            border: 2px solid #009688; /* Màu xanh ngọc */
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #009688;
+            flex-shrink: 0; /* Không bị co lại */
+        }
+
+        /* Text Group */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .contact-label {
+            font-size: 13px;
+            color: #666;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .contact-value {
+            font-size: 14px;
+            color: #1F2B5B; /* Màu xanh đen */
+            font-weight: 800;
+        }
+
+        /* =========================================
+           INTERFACE 13: VERIFY CODE STYLES
+           ========================================= */
+        .screen-13 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Instruction Text đậm hơn chút so với màn trước */
+        .verify-instruction {
+            text-align: center;
+            padding: 40px 20px 30px 20px;
+            font-size: 15px;
+            color: #333;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        /* Timer Text */
+        .resend-timer {
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #555;
+            font-weight: 700;
+        }
+        .highlight-blue {
+            color: #0065FF;
+        }
+
+        /* =========================================
+           INTERFACE 14: RESET PASSWORD STYLES
+           ========================================= */
+        .screen-14 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Tiêu đề căn giữa, đẩy xuống dưới giống màn 12 */
+        .new-pass-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: #1F2B5B;
+            padding: 0 30px;
+            margin-top: 200px; /* Đẩy nội dung xuống khoảng giữa màn hình */
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        /* =========================================
+           INTERFACE 15: SUCCESS RESET PASSWORD
+           ========================================= */
+        /* Tận dụng lại style của screen-11 (Modal wrapper) */
+        .screen-15 {
+            width: 100%;
+            height: 100%;
+            background-color: #F5F9FF;
+            position: relative;
+            overflow: hidden; 
+        }
+        
+        /* Các class .modal-overlay, .success-card đã có ở Interface 11 nên không cần khai báo lại */
+        /* Chỉ cần vẽ SVG mới trong phần HTML */
+
+        /* =========================================
+           INTERFACE 16: HOME SCREEN STYLES
+           ========================================= */
+        .screen-16 {
+            width: 100%;
+            height: 100%;
+            background-color: #F8F9FD; /* Nền xám xanh rất nhạt */
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Cuộn dọc toàn trang */
+            padding-bottom: 20px;
+        }
+        /* Ẩn thanh cuộn dọc nhưng vẫn cho cuộn */
+        .screen-16::-webkit-scrollbar { display: none; }
+
+        .home-padding { padding: 0 20px; }
+
+        /* TOP HEADER */
+        .home-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .user-greeting h2 { font-size: 20px; font-weight: 800; color: #1F2B5B; margin-bottom: 5px; }
+        .user-greeting p { font-size: 13px; color: #666; font-weight: 600; width: 220px; line-height: 1.4; }
+        
+        .notification-btn {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            border: 2px solid #009688; /* Màu xanh ngọc */
+            display: flex; align-items: center; justify-content: center;
+            color: #009688; position: relative;
+        }
+        .notif-dot {
+            width: 8px; height: 8px; background: #FF5722;
+            border-radius: 50%; border: 1px solid white;
+            position: absolute; top: 8px; right: 8px;
+        }
+
+        /* SEARCH BAR */
+        .search-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        .search-input-box {
+            width: 100%; height: 50px;
+            background: white; border-radius: 12px;
+            display: flex; align-items: center;
+            padding: 0 50px 0 15px; /* Chừa chỗ cho nút filter */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+        .search-input-box input {
+            border: none; outline: none; width: 100%; margin-left: 10px;
+            font-family: 'Nunito'; font-weight: 600; color: #333;
+        }
+        .filter-btn-square {
+            position: absolute; right: 5px; top: 5px;
+            width: 40px; height: 40px;
+            background: #0065FF; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+
+        /* PROMO BANNER */
+        .promo-banner {
+            width: 100%;
+            background: linear-gradient(135deg, #0065FF 0%, #004ECB 100%);
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 101, 255, 0.25);
+        }
+        /* Background decor shapes */
+        .banner-bg-shape { position: absolute; opacity: 0.1; }
+        .bs-1 { width: 100px; height: 100px; border: 4px solid white; border-radius: 50%; top: -20px; right: 40px; }
+        .bs-2 { bottom: 0; right: 0; width: 100%; height: 60px; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom; background-size: cover; opacity: 0.2;}
+
+        .promo-tag { font-size: 12px; font-weight: 800; opacity: 0.9; margin-bottom: 5px; display: block; }
+        .promo-title { font-size: 18px; font-weight: 800; margin-bottom: 10px; line-height: 1.3; }
+        .promo-desc { font-size: 13px; font-weight: 600; opacity: 0.9; width: 70%; line-height: 1.4; margin-bottom: 15px; }
+        
+        .banner-dots { display: flex; gap: 5px; }
+        .b-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 50%; }
+        .b-dot.active { background: #FFC107; width: 18px; border-radius: 3px; }
+
+        /* SECTION HEADERS */
+        .section-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px;
+        }
+        .sec-title { font-size: 18px; font-weight: 700; color: #1F2B5B; }
+        .sec-link { font-size: 12px; font-weight: 800; color: #0065FF; text-decoration: none; display: flex; align-items: center; }
+
+        /* HORIZONTAL SCROLL CONTAINERS */
+        .horz-scroll {
+            display: flex; overflow-x: auto; gap: 15px;
+            padding-bottom: 10px; /* Space for scrollbar if any */
+            /* Hide scrollbar */
+            scrollbar-width: none; -ms-overflow-style: none;
+        }
+        .horz-scroll::-webkit-scrollbar { display: none; }
+        
+        /* CATEGORY TEXT LINKS */
+        .cat-text { font-size: 14px; font-weight: 700; color: #999; white-space: nowrap; margin-right: 10px; }
+        .cat-text.active { color: #0065FF; }
+
+        /* TAG PILLS */
+        .tag-pill {
+            padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; white-space: nowrap;
+        }
+        .tag-pill.active { background: #009688; color: white; box-shadow: 0 4px 10px rgba(0, 150, 136, 0.3); }
+        .tag-pill.inactive { background: #EDF1F7; color: #555; }
+
+        /* COURSE CARDS */
+        .course-card {
+            min-width: 260px; background: white; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;
+        }
+        .cc-img-placeholder {
+            height: 140px; width: 100%; background: #eee; position: relative;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+        .cc-img-placeholder svg { width: 100%; height: 100%; object-fit: cover; }
+        
+        .cc-content { padding: 12px; }
+        .cc-cat { font-size: 11px; font-weight: 800; color: #FF6D00; margin-bottom: 5px; text-transform: uppercase; }
+        .cc-title { font-size: 15px; font-weight: 800; color: #1F2B5B; margin-bottom: 10px; line-height: 1.3; }
+        
+        .cc-footer { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; color: #555; }
+        .cc-price { color: #0065FF; font-size: 15px; font-weight: 800; }
+        .cc-rating { display: flex; align-items: center; gap: 3px; font-size: 12px; }
+        .cc-bookmark { width: 20px; color: #009688; }
+
+        /* MENTOR AVATARS */
+        .mentor-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; }
+        .mentor-img { 
+            width: 60px; height: 60px; border-radius: 50%; background: #ddd; margin-bottom: 8px; 
+            overflow: hidden; border: 2px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        .mentor-name { font-size: 12px; font-weight: 700; color: #1F2B5B; }
+
+        /* =========================================
+           INTERFACE 17: ALL CATEGORIES STYLES
+           ========================================= */
+        .screen-17 {
+            width: 100%;
+            height: 100%;
+            background-color: #F8F9FD;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .screen-17::-webkit-scrollbar { display: none; }
+
+        /* Search Bar Variation (Cleaner style) */
+        .search-clean-wrapper {
+            padding: 0 20px 20px 20px;
+        }
+        .search-box-blue-btn {
+            width: 100%; height: 50px;
+            background: white; border-radius: 12px;
+            display: flex; align-items: center;
+            padding: 0 5px 0 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+        }
+        .search-box-blue-btn input {
+            flex: 1; border: none; outline: none;
+            font-family: 'Nunito'; font-weight: 600; color: #333;
+            font-size: 14px;
+        }
+        .btn-search-square {
+            width: 40px; height: 40px;
+            background: #0065FF; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 101, 255, 0.2);
+        }
+
+        /* CATEGORY GRID */
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Chia 2 cột đều nhau */
+            row-gap: 30px;    /* Khoảng cách hàng */
+            column-gap: 15px; /* Khoảng cách cột */
+            padding: 10px 30px 40px 30px;
+        }
+
+        .cat-grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .cat-grid-item:active { transform: scale(0.95); }
+
+        .cat-icon-large {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 12px;
+            /* SVG sẽ tự fill size trong này */
+        }
+        
+        .cat-label-grid {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1F2B5B; /* Xanh đen */
+            line-height: 1.3;
+        }
+
+        /* =========================================
+           INTERFACE 18: SEARCH HISTORY STYLES
+           ========================================= */
+        .screen-18 {
+            width: 100%;
+            height: 100%;
+            background-color: #F8F9FD;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Recent Header (Tiêu đề danh sách) */
+        .recent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px;
+            margin-bottom: 10px;
+        }
+        .recent-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1F2B5B;
+        }
+        .view-all-link {
+            font-size: 11px;
+            font-weight: 800;
+            color: #0065FF;
+            text-decoration: none;
+            display: flex; align-items: center;
+            text-transform: uppercase;
+        }
+
+        /* List Items */
+        .recent-list {
+            padding: 0 30px 20px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px; /* Khoảng cách giữa các dòng */
+            overflow-y: auto;
+            flex: 1;
+        }
+        .recent-list::-webkit-scrollbar { display: none; }
+
+        .recent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: #9E9E9E; /* Màu xám nhạt cho text lịch sử */
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+        .recent-item:hover { color: #1F2B5B; } /* Hover thì đậm lên */
+
+        .btn-remove-x {
+            color: #444; /* Màu đậm hơn cho chữ X */
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 5px; /* Tăng diện tích bấm */
+            background: none;
+            border: none;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* =========================================
+           INTERFACE 19: POPULAR COURSES LIST
+           ========================================= */
+        .screen-19 {
+            width: 100%;
+            height: 100%;
+            background-color: #F8F9FD;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* TAB BAR (Bottom Navigation) */
+        .bottom-nav {
+            height: 70px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+            border-top: 1px solid #eee;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.02);
+            z-index: 10;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #999;
+        }
+        .nav-item.active { color: #009688; } /* Màu xanh ngọc chủ đạo */
+        .nav-icon { width: 24px; height: 24px; }
+        .nav-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+
+        /* LIST CONTAINER */
+        .course-list-vertical {
+            flex: 1; /* Chiếm hết khoảng trống còn lại */
+            overflow-y: auto;
+            padding: 0 20px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .course-list-vertical::-webkit-scrollbar { display: none; }
+
+        /* HORIZONTAL COURSE CARD */
+        .course-card-horz {
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            height: 130px;
+            flex-shrink: 0;
+        }
+        
+        .cch-img {
+            width: 130px;
+            height: 100%;
+            background: #eee;
+            position: relative;
+        }
+        .cch-img svg { width: 100%; height: 100%; object-fit: cover; }
+
+        .cch-content {
+            flex: 1;
+            padding: 12px 15px 12px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Bookmark icon absolute top-right of content */
+        .cch-bookmark {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            width: 16px; 
+            color: #009688;
+        }
+
+        .cch-cat { font-size: 11px; font-weight: 800; color: #FF6D00; margin-bottom: 6px; }
+        .cch-title { 
+            font-size: 15px; font-weight: 800; color: #1F2B5B; margin-bottom: 8px; line-height: 1.3;
+            padding-right: 20px; /* Tránh đè lên bookmark */
+        }
+        
+        .price-row {
+            display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px;
+        }
+        .price-current { font-size: 18px; font-weight: 800; color: #0065FF; }
+        .price-old { font-size: 13px; font-weight: 700; color: #bbb; text-decoration: line-through; }
+
+        .stats-row {
+            display: flex; align-items: center; gap: 15px; font-size: 11px; font-weight: 700; color: #333;
+        }
+
+        /* =========================================
+           INTERFACE 20: TOP MENTORS LIST
+           ========================================= */
+        .screen-20 {
+            width: 100%;
+            height: 100%;
+            background-color: #F8F9FD; /* Nền xanh xám nhạt */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Container cuộn cho danh sách */
+        .mentor-list-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 25px 20px 25px; /* Padding 2 bên */
+        }
+        .mentor-list-container::-webkit-scrollbar { display: none; }
+
+        /* MENTOR ROW ITEM */
+        .mentor-row {
+            display: flex;
+            align-items: center;
+            padding: 18px 0; /* Khoảng cách trên dưới mỗi dòng */
+            border-bottom: 1px solid #E0E0E0; /* Đường kẻ mờ ngăn cách */
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .mentor-row:last-child { border-bottom: none; }
+        .mentor-row:active { opacity: 0.7; }
+
+        /* Avatar Style */
+        .mentor-avatar-blue {
+            width: 56px;
+            height: 56px;
+            background: #0065FF; /* Màu xanh dương sáng */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid white; /* Viền trắng dày tạo độ nổi */
+            box-shadow: 0 5px 15px rgba(0, 101, 255, 0.15); /* Đổ bóng nhẹ */
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+        /* Icon người bên trong avatar */
+        .user-icon-silhouette {
+            width: 28px;
+            height: 28px;
+            fill: white;
+        }
+
+        /* Text Info */
+        .m-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .m-name {
+            font-size: 16px;
+            font-weight: 800; /* Nunito ExtraBold */
+            color: #1F2B5B;
+        }
+        .m-job {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- =======================================================
+         INTERFACE 01 START
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-01">
+            
+            <!-- Background Decor -->
+            <div class="c1 screen-01__circle"></div>
+            <div class="screen-01__bg-shape"></div>
+            
+            <!-- Bong bóng nhỏ -->
+            <div class="c2 screen-01__circle"></div>
+            <div class="c3 screen-01__circle"></div>
+
+            <!-- Nội dung chính -->
+            <div class="screen-01__content">
+                <!-- Icon Tablet + Hand -->
+                <div class="screen-01__icon">
+                    <div class="screen-01__icon-screen">
+                        <div class="screen-01__play-btn"></div>
+                        <div class="screen-01__loading-bar">
+                            <div class="screen-01__loading-dot"></div>
+                        </div>
+                    </div>
+                    <div class="screen-01__hand"></div>
+                </div>
+
+                <!-- Text -->
+                <h1 class="screen-01__title">Telead</h1>
+                <p class="screen-01__subtitle">HỌC MỌI LÚC</p>
+                <button class="screen-01__start-btn" type="button">Bắt đầu</button>
+            </div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 01 END
+         ======================================================= -->
+
+    <!-- KHI CÓ INTERFACE 2, DÁN CODE VÀO ĐÂY -->
+     <!-- =======================================================
+         INTERFACE 02 START: ONBOARDING SCREEN
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-02">
+            
+            <!-- Status Bar (9:41) -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <!-- Header: Nút Bỏ qua -->
+            <div class="screen-02__header">
+                <a href="#" class="btn-skip">Bỏ qua</a>
+            </div>
+
+            <!-- Khoảng trống (nơi thường để ảnh minh họa) -->
+            <div class="screen-02__illustration-space"></div>
+
+            <!-- Nội dung Text -->
+            <div class="screen-02__content">
+                <h2 class="screen-02__title">Học trực tuyến</h2>
+                <p class="screen-02__desc">
+                    Chúng tôi cung cấp các lớp học trực tuyến và bài giảng được ghi hình sẵn!
+                </p>
+            </div>
+
+            <!-- Footer: Dots & Button -->
+            <div class="screen-02__footer">
+                <!-- Pagination -->
+                <div class="pagination">
+                    <div class="dot active"></div>
+                    <div class="dot inactive"></div>
+                    <div class="dot inactive"></div>
+                </div>
+
+                <!-- Next Button -->
+                <button class="btn-next">
+                    <i class="arrow-icon"></i>
+                </button>
+            </div>
+
+            <!-- Home Indicator -->
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 02 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 03 START: ONBOARDING SCREEN 2
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-03">
+            
+            <!-- Status Bar (Dùng lại class chung đã khai báo ở Interface 2) -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <!-- Header -->
+            <div class="screen-03__header">
+                <a href="#" class="btn-skip">Bỏ qua</a>
+            </div>
+
+            <!-- Khoảng trống -->
+            <div class="screen-03__illustration-space"></div>
+
+            <!-- Nội dung Text mới -->
+            <div class="screen-03__content">
+                <h2 class="screen-03__title">Học mọi lúc mọi nơi</h2>
+                <p class="screen-03__desc">
+                    Giữ nguyên các bài giảng cho tương lai
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="screen-03__footer">
+                <!-- Pagination: Chú ý class 'active' đã chuyển sang vị trí số 2 -->
+                <div class="pagination">
+                    <div class="dot inactive"></div>
+                    <div class="dot active"></div>
+                    <div class="dot inactive"></div>
+                </div>
+
+                <!-- Next Button -->
+                <button class="btn-next">
+                    <i class="arrow-icon"></i>
+                </button>
+            </div>
+
+            <!-- Home Indicator -->
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 03 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 04 START: ONBOARDING SCREEN 3
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-04">
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <!-- Header -->
+            <div class="screen-04__header">
+                <a href="#" class="btn-skip">Bỏ qua</a>
+            </div>
+
+            <!-- Khoảng trống -->
+            <div class="screen-04__illustration-space"></div>
+
+            <!-- Nội dung Text mới -->
+            <div class="screen-04__content">
+                <h2 class="screen-04__title">Nhận chứng chỉ trực tuyến</h2>
+                <p class="screen-04__desc">
+                    Phân tích điểm số của bạn và theo dõi kết quả của bạn
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="screen-04__footer">
+                <!-- Pagination: Class 'active' chuyển sang vị trí số 3 -->
+                <div class="pagination">
+                    <div class="dot inactive"></div>
+                    <div class="dot inactive"></div>
+                    <div class="dot active"></div>
+                </div>
+
+                <!-- NEW Button: Bắt đầu -->
+                <button class="btn-get-started">
+                    <span>Bắt đầu</span>
+                    <div class="btn-circle-inner">
+                        <i class="arrow-icon-blue"></i>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Home Indicator -->
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 04 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 05 START: LOGIN OPTIONS
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-05">
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <!-- Khoảng trống lớn phía trên -->
+            <div class="screen-05__spacer"></div>
+
+            <!-- Nội dung chính -->
+            <div class="screen-05__content">
+                <h2 class="screen-05__title">Cùng bắt đầu</h2>
+
+                <!-- Nút Google -->
+                <div class="social-btn">
+                    <div class="social-icon-box">
+                        <!-- SVG Logo Google -->
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.84z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                    </div>
+                    <span class="social-text">Tiếp tục với Google</span>
+                </div>
+
+                <!-- Nút Apple -->
+                <div class="social-btn">
+                    <div class="social-icon-box">
+                        <!-- SVG Logo Apple -->
+                        <svg width="24" height="24" viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                        </svg>
+                    </div>
+                    <span class="social-text">Tiếp tục với Apple</span>
+                </div>
+
+                <!-- Divider -->
+                <p class="divider-text">( Hoặc )</p>
+
+                <!-- Nút Đăng nhập chính -->
+                <button class="btn-primary-large">
+                    <span>Đăng nhập với Tài khoản</span>
+                    <!-- Dùng lại class vòng tròn của Interface 4 -->
+                    <div class="btn-circle-inner">
+                        <i class="arrow-icon-blue"></i>
+                    </div>
+                </button>
+
+                <!-- Footer Link -->
+                <div class="footer-link-text">
+                    Chưa có tài khoản? <a href="#">ĐĂNG KÝ</a>
+                </div>
+
+            </div>
+
+            <!-- Home Indicator -->
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 05 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 06 START: SIGN UP
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-06">
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <div class="screen-06__container">
+                
+                <!-- Logo Section (Kết hợp Icon cũ + Text mới) -->
+                <div class="screen-06__header-logo">
+                    <!-- Wrapper để scale nhỏ icon -->
+                    <div class="logo-small-wrapper">
+                        <!-- Copy cấu trúc icon từ Interface 1 -->
+                        <div class="screen-01__icon" style="margin:0; box-shadow:none;">
+                            <div class="screen-01__icon-screen">
+                                <div class="screen-01__play-btn"></div>
+                                <div class="screen-01__loading-bar">
+                                    <div class="screen-01__loading-dot"></div>
+                                </div>
+                            </div>
+                            <div class="screen-01__hand"></div>
+                        </div>
+                    </div>
+                    <!-- Text bên phải -->
+                    <div class="logo-text-group">
+                        <span class="logo-text-main">Telead</span>
+                        <span class="logo-text-sub">HỌC MỌI LÚC</span>
+                    </div>
+                </div>
+
+                <!-- Titles -->
+                <div class="screen-06__title-box">
+                    <h2 class="screen-06__heading">Bắt đầu thôi!</h2>
+                    <p class="screen-06__subheading">
+                        Tạo một tài khoản để tiếp tục tất cả các khóa học của bạn
+                    </p>
+                </div>
+
+                <!-- Form Inputs -->
+                <form onsubmit="return false;">
+                    
+                    <!-- Email Input -->
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <!-- SVG Envelope -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </div>
+                        <input type="email" class="input-field" placeholder="Email">
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <!-- SVG Lock -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        </div>
+                        <input type="password" class="input-field" placeholder="Mật khẩu">
+                        <div class="input-icon" style="cursor: pointer;">
+                            <!-- SVG Eye Off -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        </div>
+                    </div>
+
+                    <!-- Checkbox -->
+                    <div class="checkbox-row">
+                        <div class="custom-checkbox">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                        <span class="checkbox-text">Đồng ý với Điều khoản & Điều kiện</span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="btn-signup-wrapper">
+                        <button class="btn-signup">
+                            <span style="flex:1; text-align:center;">Đăng ký</span>
+                            <div class="btn-circle-inner">
+                                <i class="arrow-icon-blue"></i>
+                            </div>
+                        </button>
+                    </div>
+
+                </form>
+
+                <!-- Social Login -->
+                <p class="or-text">Hoặc tiếp tục với</p>
+                <div class="social-row">
+                    <!-- Google Btn -->
+                    <div class="social-circle-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.84z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                    </div>
+                    <!-- Apple Btn -->
+                    <div class="social-circle-btn">
+                        <svg width="24" height="24" viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="footer-center">
+                    Đã có tài khoản? <a href="#">ĐĂNG NHẬP</a>
+                </div>
+
+            </div>
+            
+            <!-- Home Indicator -->
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 06 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 07 START: LOGIN
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-07">
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <!-- Container chung (Dùng lại class của Interface 6) -->
+            <div class="screen-06__container">
+                
+                <!-- Logo Section (Dùng lại) -->
+                <div class="screen-06__header-logo">
+                    <div class="logo-small-wrapper">
+                        <div class="screen-01__icon" style="margin:0; box-shadow:none;">
+                            <div class="screen-01__icon-screen">
+                                <div class="screen-01__play-btn"></div>
+                                <div class="screen-01__loading-bar">
+                                    <div class="screen-01__loading-dot"></div>
+                                </div>
+                            </div>
+                            <div class="screen-01__hand"></div>
+                        </div>
+                    </div>
+                    <div class="logo-text-group">
+                        <span class="logo-text-main">Telead</span>
+                        <span class="logo-text-sub">HỌC MỌI LÚC</span>
+                    </div>
+                </div>
+
+                <!-- Titles (Nội dung thay đổi) -->
+                <div class="screen-06__title-box">
+                    <h2 class="screen-06__heading">Đăng nhập nào!</h2>
+                    <p class="screen-06__subheading">
+                        Đăng nhập vào tài khoản để tiếp tục khóa học
+                    </p>
+                </div>
+
+                <!-- Form -->
+                <form onsubmit="return false;">
+                    
+                    <!-- Email Input (Dùng lại) -->
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </div>
+                        <input type="email" class="input-field" placeholder="Email">
+                    </div>
+
+                    <!-- Password Input (Dùng lại) -->
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        </div>
+                        <input type="password" class="input-field" placeholder="Mật khẩu">
+                        <div class="input-icon" style="cursor: pointer;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        </div>
+                    </div>
+
+                    <!-- NEW: Remember Me & Forgot Password Row -->
+                    <div class="remember-forgot-row">
+                        <div class="remember-box">
+                            <div class="checkbox-square"></div>
+                            <span class="remember-text">Ghi nhớ tôi</span>
+                        </div>
+                        <a href="#" class="forgot-pass-link">Quên mật khẩu?</a>
+                    </div>
+
+                    <!-- Submit Button: Đăng nhập -->
+                    <div class="btn-signup-wrapper">
+                        <button class="btn-signup">
+                            <span style="flex:1; text-align:center;">Đăng nhập</span>
+                            <div class="btn-circle-inner">
+                                <i class="arrow-icon-blue"></i>
+                            </div>
+                        </button>
+                    </div>
+
+                </form>
+
+                <!-- Social Login (Dùng lại) -->
+                <p class="or-text">Hoặc tiếp tục với</p>
+                <div class="social-row">
+                    <div class="social-circle-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                    </div>
+                    <div class="social-circle-btn">
+                        <svg width="24" height="24" viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                    </div>
+                </div>
+
+                <!-- Footer Text -->
+                <div class="footer-center">
+                    Chưa có tài khoản? <a href="#">ĐĂNG KÝ</a>
+                </div>
+
+            </div>
+            
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 07 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 08 START: FILL PROFILE
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-08">
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <!-- Header Row -->
+            <div class="header-row">
+                <button class="btn-back">
+                    <!-- Icon Back Arrow -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <span class="header-title-text">Điền hồ sơ của bạn</span>
+            </div>
+
+            <!-- Container Form -->
+            <div class="screen-06__container">
+                
+                <!-- Avatar Section -->
+                <div class="avatar-section">
+                    <div class="avatar-circle-placeholder">
+                        <!-- Icon User Placeholder -->
+                        <div class="avatar-wrapper" style="transform: scale(0.6);">
+                            <svg width="100" height="100" viewBox="0 0 24 24" fill="#ffffff" stroke="none"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        </div>
+                        <!-- Edit Button (Pencil) -->
+                        <div class="avatar-edit-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Fields -->
+                <form onsubmit="return false;">
+                    
+                    <!-- Họ tên (No Icon) -->
+                    <div class="input-group">
+                        <input type="text" class="input-field" placeholder="Họ tên">
+                    </div>
+
+                    <!-- Biệt danh (No Icon) -->
+                    <div class="input-group">
+                        <input type="text" class="input-field" placeholder="Biệt danh">
+                    </div>
+
+                    <!-- Ngày sinh (Calendar Icon) -->
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        </div>
+                        <input type="text" class="input-field" placeholder="Ngày sinh">
+                    </div>
+
+                    <!-- Email (Envelope Icon) -->
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        </div>
+                        <input type="email" class="input-field" placeholder="Email">
+                    </div>
+
+                    <!-- Phone Number (Flag + Dropdown) -->
+                    <div class="input-group">
+                        <!-- Vietnam Flag SVG -->
+                        <svg class="flag-icon" viewBox="0 0 30 20">
+                            <rect width="30" height="20" fill="#DA251D"/>
+                            <polygon points="15,4 16.5,8 20.5,8 17.5,11 18.5,15 15,13 11.5,15 12.5,11 9.5,8 13.5,8" fill="#FFCD00"/>
+                        </svg>
+                        <!-- Arrow Down Mini -->
+                        <svg class="phone-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        
+                        <input type="tel" class="input-field" placeholder="Số điện thoại" value="( +84 )  869 848 225" style="font-weight: 700;">
+                    </div>
+
+                    <!-- Gender (Dropdown) -->
+                    <div class="input-group">
+                        <input type="text" class="input-field" placeholder="Giới tính" readonly style="cursor: pointer;">
+                        <svg class="dropdown-arrow" width="20" height="20" viewBox="0 0 24 24" fill="#333"><path d="M7 10l5 5 5-5z"/></svg>
+                    </div>
+
+                    <!-- Button Continue -->
+                    <div class="btn-signup-wrapper" style="margin-top: 20px;">
+                        <button class="btn-signup">
+                            <span style="flex:1; text-align:center;">Tiếp tục</span>
+                            <div class="btn-circle-inner">
+                                <i class="arrow-icon-blue"></i>
+                            </div>
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+            
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 08 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 09 START: CREATE PIN
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-09">
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <!-- Header (Reuse) -->
+            <div class="header-row">
+                <button class="btn-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <span class="header-title-text">Tạo mã Pin</span>
+            </div>
+
+            <!-- Instruction -->
+            <p class="pin-instruction">
+                Thêm mã Pin cho tài khoản của bạn được bảo mật hơn
+            </p>
+
+            <!-- PIN Boxes -->
+            <div class="pin-box-container">
+                <!-- Box 1: * -->
+                <div class="pin-box">
+                    <span class="pin-dot">∗</span>
+                </div>
+                <!-- Box 2: * -->
+                <div class="pin-box">
+                    <span class="pin-dot">∗</span>
+                </div>
+                <!-- Box 3: Số 8 -->
+                <div class="pin-box">8</div>
+                <!-- Box 4: Empty -->
+                <div class="pin-box active"></div>
+            </div>
+
+            <!-- Button Continue (Centered) -->
+            <div class="btn-signup-wrapper">
+                <button class="btn-signup">
+                    <span style="flex:1; text-align:center;">Tiếp tục</span>
+                    <div class="btn-circle-inner">
+                        <i class="arrow-icon-blue"></i>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Numeric Keypad -->
+            <div class="keypad-container">
+                <div class="keypad-grid">
+                    <button class="keypad-btn">1</button>
+                    <button class="keypad-btn">2</button>
+                    <button class="keypad-btn">3</button>
+                    
+                    <button class="keypad-btn">4</button>
+                    <button class="keypad-btn">5</button>
+                    <button class="keypad-btn">6</button>
+                    
+                    <button class="keypad-btn">7</button>
+                    <button class="keypad-btn">8</button>
+                    <button class="keypad-btn">9</button>
+                    
+                    <button class="keypad-btn">∗</button>
+                    <button class="keypad-btn">0</button>
+                    <button class="keypad-btn">
+                        <!-- Backspace Icon SVG -->
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 09 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 10 START: FINGERPRINT SETUP
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-10">
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <!-- Header -->
+            <div class="header-row">
+                <button class="btn-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <span class="header-title-text">Thiết lập vân tay</span>
+            </div>
+
+            <!-- Main Content: Scan Area -->
+            <div class="scan-wrapper">
+                <!-- Top Text -->
+                <p class="pin-instruction" style="padding-bottom: 0;">
+                    Thêm vân tay cho tài khoản của bạn được bảo mật hơn
+                </p>
+
+                <!-- Fingerprint Graphic -->
+                <div class="fingerprint-box">
+                    <!-- 4 Corners -->
+                    <div class="scan-corner top-left"></div>
+                    <div class="scan-corner top-right"></div>
+                    <div class="scan-corner bottom-left"></div>
+                    <div class="scan-corner bottom-right"></div>
+
+                    <!-- SVG Fingerprint Icon -->
+                    <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#0065FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 6"/>
+                        <path d="M5 19.5C5.5 18 6 15 12 15a8 8 0 0 1 7.5 4"/>
+                        <path d="M8.5 10a5 5 0 0 1 7.5 1"/>
+                        <path d="M12 22v-3"/>
+                        <path d="M9 21.5a10 10 0 0 1-2.8-5"/>
+                        <path d="M16 21.5a10 10 0 0 0 1.5-3"/>
+                        <path d="M12 8a3 3 0 0 1 2.8 4"/>
+                        <path d="M9.5 12.5a3 3 0 0 1 0-2"/>
+                    </svg>
+                </div>
+
+                <!-- Bottom Text -->
+                <p class="scan-text-bottom">
+                    Hay đặt ngón tay của bạn vào phần cảm biến vân tay
+                </p>
+            </div>
+
+            <!-- Footer: 2 Buttons -->
+            <div class="footer-dual-btn">
+                <!-- Nút Bỏ qua -->
+                <button class="btn-secondary">Bỏ qua</button>
+                
+                <!-- Nút Tiếp tục -->
+                <button class="btn-primary-half">
+                    <span style="flex:1; text-align:center;">Tiếp tục</span>
+                    <div class="btn-circle-inner">
+                        <i class="arrow-icon-blue"></i>
+                    </div>
+                </button>
+            </div>
+
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 10 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 11 START: SUCCESS MODAL
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-11">
+            
+            <!-- --- BACKGROUND LAYER (Copy from Screen 10) --- -->
+            <!-- Phần này bị mờ đi bởi overlay, để tạo ngữ cảnh -->
+            <div style="opacity: 0.3; pointer-events: none; height: 100%; display: flex; flex-direction: column;">
+                <div class="status-bar"><span>9:41</span><div class="status-icons"><div class="wifi"></div><div class="battery"></div></div></div>
+                <div class="header-row"><button class="btn-back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button><span class="header-title-text">Thiết lập vân tay</span></div>
+                <div class="scan-wrapper">
+                    <p class="pin-instruction">Thêm vân tay cho tài khoản của bạn được bảo mật hơn</p>
+                    <div class="fingerprint-box"><div class="scan-corner top-left"></div><div class="scan-corner top-right"></div><div class="scan-corner bottom-left"></div><div class="scan-corner bottom-right"></div><svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="#0065FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 6"/><path d="M5 19.5C5.5 18 6 15 12 15a8 8 0 0 1 7.5 4"/><path d="M8.5 10a5 5 0 0 1 7.5 1"/><path d="M12 22v-3"/><path d="M9 21.5a10 10 0 0 1-2.8-5"/><path d="M16 21.5a10 10 0 0 0 1.5-3"/><path d="M12 8a3 3 0 0 1 2.8 4"/><path d="M9.5 12.5a3 3 0 0 1 0-2"/></svg></div>
+                    <p class="scan-text-bottom">Hay đặt ngón tay của bạn vào phần cảm biến vân tay</p>
+                </div>
+                <div class="footer-dual-btn"><button class="btn-secondary">Bỏ qua</button><button class="btn-primary-half"><span style="flex:1; text-align:center;">Tiếp tục</span><div class="btn-circle-inner"><i class="arrow-icon-blue"></i></div></button></div>
+                <div class="home-indicator"></div>
+            </div>
+            <!-- --- END BACKGROUND LAYER --- -->
+
+
+            <!-- --- MODAL OVERLAY --- -->
+            <div class="modal-overlay">
+                <div class="success-card">
+                    
+                    <!-- Illustration: Boy Avatar -->
+                    <div class="illustration-wrapper">
+                        <!-- Background Circle -->
+                        <div style="width: 100%; height: 100%; background: #FFC107; border-radius: 50%; overflow: hidden; position: relative; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                            <!-- Vẽ Avatar chàng trai bằng SVG đơn giản -->
+                            <svg viewBox="0 0 100 100" width="100%" height="100%">
+                                <!-- Hoodie -->
+                                <path d="M10 90 Q 50 110 90 90 L 90 100 L 10 100 Z" fill="#546E7A" />
+                                <path d="M20 80 Q 50 100 80 80 L 80 90 L 20 90 Z" fill="#455A64" />
+                                <circle cx="50" cy="85" r="30" fill="#546E7A" />
+                                <!-- Face -->
+                                <ellipse cx="50" cy="55" rx="22" ry="28" fill="#FFE0B2" />
+                                <!-- Neck -->
+                                <rect x="42" y="75" width="16" height="15" fill="#FFE0B2" />
+                                <!-- Hair -->
+                                <path d="M28 50 Q 25 30 50 25 Q 75 30 72 50 Q 75 40 70 30 Q 50 15 30 30 Q 25 40 28 50" fill="#795548" />
+                                <path d="M50 25 Q 60 15 55 30" fill="#795548" />
+                                <!-- Ears -->
+                                <circle cx="28" cy="55" r="4" fill="#FFE0B2" />
+                                <circle cx="72" cy="55" r="4" fill="#FFE0B2" />
+                                <!-- Hoodie strings -->
+                                <path d="M45 80 L 45 95" stroke="white" stroke-width="2" />
+                                <path d="M55 80 L 55 95" stroke="white" stroke-width="2" />
+                            </svg>
+                        </div>
+
+                        <!-- Confetti Elements -->
+                        <div class="confetti cf-star">★</div>
+                        <div class="confetti cf-tri-blue"></div>
+                        <div class="confetti cf-circle-orange"></div>
+                        <div class="confetti cf-star-red">★</div>
+                        <div class="confetti cf-tri-green"></div>
+                        <div class="confetti cf-dot-brown"></div>
+                    </div>
+
+                    <h3 class="modal-title">Chúc mừng</h3>
+                    <p class="modal-desc">
+                        Tài khoản của bạn giờ đây đã<br>sẵn sàng để sử dụng
+                    </p>
+
+                    <div class="loading-spinner"></div>
+                    <button class="btn-primary-large modal-continue-btn" type="button">
+                        <span>Đi tới trang chủ</span>
+                        <div class="btn-circle-inner">
+                            <i class="arrow-icon-blue"></i>
+                        </div>
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 11 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 12 START: FORGOT PASSWORD SELECTION
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-12">
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <!-- Header -->
+            <div class="header-row">
+                <button class="btn-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <span class="header-title-text">Quên mật khẩu</span>
+            </div>
+
+            <!-- Instruction Text -->
+            <p class="forgot-instruction">
+                Vui lòng chọn thông tin liên lạc của bạn để tiến hành đặt lại mật khẩu
+            </p>
+
+            <!-- Container for Cards -->
+            <div class="screen-06__container" style="padding-top: 0;">
+                
+                <!-- Option 1: Email -->
+                <div class="contact-card">
+                    <div class="icon-circle-teal">
+                        <!-- SVG Envelope -->
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    </div>
+                    <div class="contact-info">
+                        <span class="contact-label">Email</span>
+                        <span class="contact-value">nguyenvana@gmail.com</span>
+                    </div>
+                </div>
+
+                <!-- Option 2: SMS -->
+                <div class="contact-card">
+                    <div class="icon-circle-teal">
+                        <!-- SVG Message/Mail similar icon -->
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    </div>
+                    <div class="contact-info">
+                        <span class="contact-label">SMS</span>
+                        <span class="contact-value">( +84 ) 869 894 552</span>
+                    </div>
+                </div>
+
+                <!-- Button Continue (Margin Top Auto để đẩy xuống dưới nếu cần, hoặc margin cố định) -->
+                <div class="btn-signup-wrapper" style="margin-top: 40px;">
+                    <button class="btn-signup">
+                        <span style="flex:1; text-align:center;">Tiếp tục</span>
+                        <div class="btn-circle-inner">
+                            <i class="arrow-icon-blue"></i>
+                        </div>
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 12 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 13 START: VERIFY CODE
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-13">
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <!-- Header (Giống màn 12) -->
+            <div class="header-row">
+                <button class="btn-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <span class="header-title-text">Quên mật khẩu</span>
+            </div>
+
+            <!-- Instruction Text -->
+            <p class="verify-instruction">
+                Mã code sẽ được gửi tới ( +84 ) ***-***-*522
+            </p>
+
+            <!-- PIN Boxes (Tái sử dụng từ Interface 9) -->
+            <div class="pin-box-container">
+                <div class="pin-box">
+                    <span class="pin-dot">∗</span>
+                </div>
+                <div class="pin-box">
+                    <span class="pin-dot">∗</span>
+                </div>
+                <div class="pin-box">8</div>
+                <div class="pin-box active"></div>
+            </div>
+
+            <!-- Resend Timer -->
+            <p class="resend-timer">
+                Gửi lại code trong vòng <span class="highlight-blue">59s</span>
+            </p>
+
+            <!-- Button Verify -->
+            <div class="btn-signup-wrapper">
+                <button class="btn-signup">
+                    <span style="flex:1; text-align:center;">Xác minh</span>
+                    <div class="btn-circle-inner">
+                        <i class="arrow-icon-blue"></i>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Numeric Keypad (Tái sử dụng từ Interface 9) -->
+            <div class="keypad-container">
+                <div class="keypad-grid">
+                    <button class="keypad-btn">1</button>
+                    <button class="keypad-btn">2</button>
+                    <button class="keypad-btn">3</button>
+                    
+                    <button class="keypad-btn">4</button>
+                    <button class="keypad-btn">5</button>
+                    <button class="keypad-btn">6</button>
+                    
+                    <button class="keypad-btn">7</button>
+                    <button class="keypad-btn">8</button>
+                    <button class="keypad-btn">9</button>
+                    
+                    <button class="keypad-btn">∗</button>
+                    <button class="keypad-btn">0</button>
+                    <button class="keypad-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 13 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 14 START: RESET PASSWORD
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-14">
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <div class="status-icons">
+                    <div class="wifi"></div>
+                    <div class="battery"></div>
+                </div>
+            </div>
+
+            <!-- Header -->
+            <div class="header-row">
+                <button class="btn-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <span class="header-title-text">Đặt mật khẩu mới</span>
+            </div>
+
+            <!-- Title -->
+            <h3 class="new-pass-title">
+                Mật khẩu mới cho tài khoản của bạn
+            </h3>
+
+            <!-- Form Container -->
+            <div class="screen-06__container" style="padding-top: 0;">
+                
+                <!-- Password Input 1 -->
+                <div class="input-group">
+                    <div class="input-icon">
+                        <!-- Lock Icon -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </div>
+                    <input type="password" class="input-field" placeholder="Nhập mật khẩu">
+                    <div class="input-icon" style="cursor: pointer;">
+                        <!-- Eye Off Icon -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                    </div>
+                </div>
+
+                <!-- Password Input 2 -->
+                <div class="input-group">
+                    <div class="input-icon">
+                        <!-- Lock Icon -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </div>
+                    <input type="password" class="input-field" placeholder="Xác nhận mật khẩu">
+                    <div class="input-icon" style="cursor: pointer;">
+                        <!-- Eye Off Icon -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                    </div>
+                </div>
+
+                <!-- Button Continue -->
+                <div class="btn-signup-wrapper" style="margin-top: 30px;">
+                    <button class="btn-signup">
+                        <span style="flex:1; text-align:center;">Tiếp tục</span>
+                        <div class="btn-circle-inner">
+                            <i class="arrow-icon-blue"></i>
+                        </div>
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 14 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 15 START: SUCCESS RESET PASSWORD MODAL
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-15">
+            
+            <!-- --- BACKGROUND LAYER (Copy from Screen 14) --- -->
+            <div style="opacity: 0.3; pointer-events: none; height: 100%; display: flex; flex-direction: column;">
+                <div class="status-bar"><span>9:41</span><div class="status-icons"><div class="wifi"></div><div class="battery"></div></div></div>
+                <div class="header-row"><button class="btn-back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button><span class="header-title-text">Đặt mật khẩu mới</span></div>
+                <h3 class="new-pass-title">Mật khẩu mới cho tài khoản của bạn</h3>
+                <div class="screen-06__container" style="padding-top: 0;">
+                    <div class="input-group"><div class="input-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div><input type="password" class="input-field" placeholder="Nhập mật khẩu" disabled></div>
+                    <div class="input-group"><div class="input-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div><input type="password" class="input-field" placeholder="Xác nhận mật khẩu" disabled></div>
+                    <div class="btn-signup-wrapper" style="margin-top: 30px;"><button class="btn-signup"><span style="flex:1; text-align:center;">Tiếp tục</span><div class="btn-circle-inner"><i class="arrow-icon-blue"></i></div></button></div>
+                </div>
+                <div class="home-indicator"></div>
+            </div>
+            <!-- --- END BACKGROUND LAYER --- -->
+
+
+            <!-- --- MODAL OVERLAY --- -->
+            <div class="modal-overlay">
+                <div class="success-card">
+                    
+                    <!-- Illustration: Gear, Lock & Key -->
+                    <div class="illustration-wrapper">
+                        <!-- SVG Illustration -->
+                        <svg viewBox="0 0 100 100" width="100%" height="100%">
+                            <!-- Black lines decoration -->
+                            <line x1="20" y1="20" x2="35" y2="45" stroke="#333" stroke-width="2" />
+                            <line x1="30" y1="20" x2="40" y2="40" stroke="#4DB6AC" stroke-width="2" />
+
+                            <!-- Gear (Bánh răng màu xám xanh) -->
+                            <path d="M50 15 L55 15 L57 22 C60 23 63 24 65 26 L72 23 L76 26 L74 33 C76 35 78 38 79 41 L86 42 L86 47 L79 49 C79 52 78 54 77 57 L83 62 L80 66 L73 64 C70 66 68 68 65 69 L63 76 L58 76 L56 69 C53 69 50 68 47 67 L44 73 L39 70 L41 63 C39 61 37 59 35 56 L28 58 L25 54 L31 49 C31 46 31 43 32 40 L26 35 L29 31 L36 33 C38 30 41 28 44 26 L42 19 L46 15 Z" fill="#607D8B" />
+                            
+                            <!-- White inner circle (Lỗ giữa bánh răng) -->
+                            <circle cx="56" cy="45" r="28" fill="white" />
+
+                            <!-- Lock (Ổ khóa đỏ) -->
+                            <rect x="42" y="42" width="20" height="16" rx="2" fill="#E57373" />
+                            <path d="M45 42 V 38 A 5 5 0 0 1 59 38 V 42" stroke="#E57373" stroke-width="3" fill="none" />
+                            <rect x="51" y="47" width="2" height="5" fill="white" opacity="0.8"/>
+
+                            <!-- Key (Chìa khóa xanh) -->
+                            <circle cx="65" cy="40" r="4" stroke="#4DB6AC" stroke-width="3" fill="none" />
+                            <line x1="65" y1="44" x2="65" y2="56" stroke="#4DB6AC" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="65" y1="50" x2="68" y2="50" stroke="#4DB6AC" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+
+                        <!-- Reuse Confetti Elements from Screen 11 -->
+                        <div class="confetti cf-star" style="left:80px; top:10px;">★</div>
+                        <div class="confetti cf-tri-blue" style="left:50px; bottom:10px;"></div>
+                        <div class="confetti cf-circle-orange" style="left:20px; top:30px;"></div>
+                        <div class="confetti cf-star-red" style="left:10px; top:60px;">★</div>
+                        <div class="confetti cf-tri-green" style="right:10px; top:40px;"></div>
+                        <div class="confetti cf-dot-brown" style="right:25px; top:35px;"></div>
+                    </div>
+
+                    <h3 class="modal-title">Chúc mừng</h3>
+                    <p class="modal-desc">
+                        Tài khoản của bạn giờ đây đã<br>sẵn sàng để sử dụng
+                    </p>
+
+                    <!-- Reuse Spinner -->
+                    <div class="loading-spinner"></div>
+                    <button class="btn-primary-large modal-continue-btn" type="button">
+                        <span>Quay lại đăng nhập</span>
+                        <div class="btn-circle-inner">
+                            <i class="arrow-icon-blue"></i>
+                        </div>
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 15 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 16 START: HOME SCREEN
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-16">
+            
+            <!-- Status Bar (Bắt buộc) -->
+            <div class="status-bar" style="background:transparent;">
+                <span>9:41</span>
+                <div class="status-icons"><div class="wifi"></div><div class="battery"></div></div>
+            </div>
+
+            <div class="home-padding">
+                
+                <!-- 1. Header: Greeting & Notif -->
+                <div class="home-header">
+                    <div class="user-greeting">
+                        <h2>Xin chào, Nguyễn Văn A</h2>
+                        <p>Bạn muốn học gì trong ngày hôm nay?</p>
+                    </div>
+                    <div class="notification-btn">
+                        <!-- Bell Icon -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        <div class="notif-dot"></div>
+                    </div>
+                </div>
+
+                <!-- 2. Search Bar -->
+                <div class="search-container">
+                    <div class="search-input-box">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" placeholder="Tìm kiếm...">
+                        <div class="filter-btn-square">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Promo Banner -->
+                <div class="promo-banner">
+                    <div class="banner-bg-shape bs-1"></div>
+                    <div class="banner-bg-shape bs-2"></div>
+                    
+                    <span class="promo-tag">25% OFF*</span>
+                    <h3 class="promo-title">Đặc biệt hôm nay</h3>
+                    <p class="promo-desc">Sử dụng mã giảm giá cho các khóa học sẽ tiết kiệm chi phí cho bạn.</p>
+                    
+                    <div class="banner-dots">
+                        <div class="b-dot"></div>
+                        <div class="b-dot active"></div>
+                        <div class="b-dot"></div>
+                        <div class="b-dot"></div>
+                    </div>
+                </div>
+
+                <!-- 4. Categories (Text) -->
+                <div class="section-header">
+                    <span class="sec-title">Danh mục</span>
+                    <a href="#" class="sec-link">XEM THÊM <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left:3px;"><polyline points="9 18 15 12 9 6"></polyline></svg></a>
+                </div>
+                <div class="horz-scroll" style="margin-bottom: 25px;">
+                    <span class="cat-text">Thiết kế 3D</span>
+                    <span class="cat-text active">Nghệ thuật</span>
+                    <span class="cat-text">Thiết kế đồ họa</span>
+                    <span class="cat-text">Lập trình Web</span>
+                    <span class="cat-text">Marketing</span>
+                </div>
+
+                <!-- 5. Popular Courses -->
+                <div class="section-header">
+                    <span class="sec-title">Khóa học phổ biến</span>
+                    <a href="#" class="sec-link">XEM THÊM <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left:3px;"><polyline points="9 18 15 12 9 6"></polyline></svg></a>
+                </div>
+                
+                <!-- Filter Pills -->
+                <div class="horz-scroll" style="margin-bottom: 20px;">
+                    <div class="tag-pill inactive">Tất cả</div>
+                    <div class="tag-pill active">Thiết kế đồ họa</div>
+                    <div class="tag-pill inactive">Thiết kế 3D</div>
+                    <div class="tag-pill inactive">Nghệ thuật</div>
+                </div>
+
+                <!-- Cards Scroll -->
+                <div class="horz-scroll" style="padding-bottom: 20px;">
+                    
+                    <!-- Card 1 -->
+                    <div class="course-card">
+                        <div class="cc-img-placeholder">
+                            <!-- SVG Placeholder Image 1 -->
+                            <svg viewBox="0 0 260 140" preserveAspectRatio="none">
+                                <rect width="100%" height="100%" fill="#37474F"/>
+                                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#546E7A" font-size="20" font-weight="800">GRAPHIC DESIGN</text>
+                                <rect x="30" y="30" width="200" height="80" stroke="#546E7A" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                        <div class="cc-content">
+                            <div class="cc-cat">Thiết kế đồ họa</div>
+                            <h4 class="cc-title">Thiết kế đồ họa nâng cao</h4>
+                            <div class="cc-footer">
+                                <span class="cc-price">200K</span>
+                                <span class="cc-rating">
+                                    <span style="color:#FFC107">★</span> 4.2
+                                    <span style="margin: 0 5px; color:#ddd">|</span>
+                                    7830 Std
+                                </span>
+                                <svg class="cc-bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="course-card">
+                        <div class="cc-img-placeholder">
+                            <!-- SVG Placeholder Image 2 -->
+                            <svg viewBox="0 0 260 140" preserveAspectRatio="none">
+                                <rect width="100%" height="100%" fill="#263238"/>
+                                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#455A64" font-size="20" font-weight="800">ADS DESIGN</text>
+                                <circle cx="130" cy="70" r="30" stroke="#455A64" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                        <div class="cc-content">
+                            <div class="cc-cat">Thiết kế đồ họa</div>
+                            <h4 class="cc-title">Quảng cáo thiết kế</h4>
+                            <div class="cc-footer">
+                                <span class="cc-price">350K</span>
+                                <span class="cc-rating"><span style="color:#FFC107">★</span> 4.8 <span style="margin: 0 5px; color:#ddd">|</span> 1200 Std</span>
+                                <svg class="cc-bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 6. Mentors -->
+                <div class="section-header">
+                    <span class="sec-title">Cố vấn tiêu biểu</span>
+                    <a href="#" class="sec-link">XEM THÊM <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left:3px;"><polyline points="9 18 15 12 9 6"></polyline></svg></a>
+                </div>
+                
+                <div class="horz-scroll" style="gap: 20px;">
+                    <!-- Mentor 1 -->
+                    <div class="mentor-item">
+                        <div class="mentor-img" style="background:#FFE0B2;">
+                             <svg viewBox="0 0 60 60"><circle cx="30" cy="25" r="10" fill="#F57C00" opacity="0.5"/><path d="M10 60 Q 30 40 50 60" fill="#F57C00" opacity="0.5"/></svg>
+                        </div>
+                        <span class="mentor-name">Thầy A</span>
+                    </div>
+                    <!-- Mentor 2 -->
+                    <div class="mentor-item">
+                        <div class="mentor-img" style="background:#B3E5FC;">
+                            <svg viewBox="0 0 60 60"><circle cx="30" cy="25" r="10" fill="#0288D1" opacity="0.5"/><path d="M10 60 Q 30 40 50 60" fill="#0288D1" opacity="0.5"/></svg>
+                        </div>
+                        <span class="mentor-name">Cô B</span>
+                    </div>
+                    <!-- Mentor 3 -->
+                    <div class="mentor-item">
+                        <div class="mentor-img" style="background:#DCEDC8;">
+                            <svg viewBox="0 0 60 60"><circle cx="30" cy="25" r="10" fill="#689F38" opacity="0.5"/><path d="M10 60 Q 30 40 50 60" fill="#689F38" opacity="0.5"/></svg>
+                        </div>
+                        <span class="mentor-name">Cô C</span>
+                    </div>
+                    <!-- Mentor 4 -->
+                    <div class="mentor-item">
+                        <div class="mentor-img" style="background:#E1BEE7;">
+                            <svg viewBox="0 0 60 60"><circle cx="30" cy="25" r="10" fill="#8E24AA" opacity="0.5"/><path d="M10 60 Q 30 40 50 60" fill="#8E24AA" opacity="0.5"/></svg>
+                        </div>
+                        <span class="mentor-name">Thầy D</span>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="home-indicator" style="margin-top: 20px;"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 16 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 17 START: ALL CATEGORIES
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-17">
+            
+            <!-- Status Bar -->
+            <div class="status-bar" style="background:transparent;">
+                <span>9:41</span>
+                <div class="status-icons"><div class="wifi"></div><div class="battery"></div></div>
+            </div>
+
+            <!-- Header -->
+            <div class="header-row">
+                <button class="btn-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <span class="header-title-text">Tất cả danh mục</span>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-clean-wrapper">
+                <div class="search-box-blue-btn">
+                    <input type="text" placeholder="Tìm kiếm....">
+                    <div class="btn-search-square">
+                        <!-- Search Icon White -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid Content -->
+            <div class="category-grid">
+                
+                <!-- 1. Thiết kế 3D (Purple) -->
+                <div class="cat-grid-item">
+                    <div class="cat-icon-large">
+                        <svg viewBox="0 0 64 64">
+                            <path d="M32 10 L52 20 L32 30 L12 20 Z" fill="#E1BEE7" stroke="#8E24AA" stroke-width="2"/>
+                            <path d="M12 20 L32 30 L32 54 L12 44 Z" fill="#BA68C8" stroke="#8E24AA" stroke-width="2"/>
+                            <path d="M52 20 L32 30 L32 54 L52 44 Z" fill="#9C27B0" stroke="#8E24AA" stroke-width="2"/>
+                            <circle cx="50" cy="50" r="8" fill="#E1BEE7" stroke="#8E24AA" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <span class="cat-label-grid">Thiết kế 3D</span>
+                </div>
+
+                <!-- 2. Thiết kế đồ họa (Red/Blue Pen) -->
+                <div class="cat-grid-item">
+                    <div class="cat-icon-large">
+                        <svg viewBox="0 0 64 64">
+                            <!-- Pen Tool Shape -->
+                            <path d="M20 44 L32 56 L32 36 L44 24 L32 12 L20 24 Z" fill="#90CAF9" stroke="#1976D2" stroke-width="2"/>
+                            <path d="M32 56 L32 62" stroke="#E64A19" stroke-width="3"/>
+                            <circle cx="32" cy="12" r="2" fill="#333"/>
+                            <!-- Dots decoration -->
+                            <circle cx="16" cy="16" r="2" fill="#333"/>
+                            <circle cx="48" cy="16" r="2" fill="#333"/>
+                            <path d="M26 30 A 10 10 0 0 1 38 30" stroke="#FF5722" stroke-width="2" fill="none"/> 
+                        </svg>
+                    </div>
+                    <span class="cat-label-grid">Thiết kế đồ họa</span>
+                </div>
+
+                <!-- 3. Phát triển web (Blue Code) -->
+                <div class="cat-grid-item">
+                    <div class="cat-icon-large">
+                        <svg viewBox="0 0 64 64">
+                            <rect x="10" y="14" width="44" height="32" rx="4" fill="#5C6BC0"/>
+                            <rect x="10" y="42" width="44" height="4" fill="#3949AB"/>
+                            <path d="M20 30 L26 30 M20 36 L34 36" stroke="white" stroke-width="2"/>
+                            <rect x="38" y="28" width="12" height="10" fill="#FF7043"/>
+                        </svg>
+                    </div>
+                    <span class="cat-label-grid">Phát triển web</span>
+                </div>
+
+                <!-- 4. SEO & Tiếp thị (Browser + Chart) -->
+                <div class="cat-grid-item">
+                    <div class="cat-icon-large">
+                        <svg viewBox="0 0 64 64">
+                            <rect x="10" y="12" width="44" height="40" rx="3" fill="#E0E0E0"/>
+                            <rect x="10" y="12" width="44" height="10" rx="3" fill="#37474F"/>
+                            <circle cx="16" cy="17" r="1" fill="white"/> <circle cx="20" cy="17" r="1" fill="white"/>
+                            <!-- Flowchart -->
+                            <rect x="26" y="26" width="12" height="10" fill="#039BE5"/>
+                            <rect x="16" y="42" width="8" height="6" fill="#039BE5"/>
+                            <rect x="28" y="42" width="8" height="6" fill="#039BE5"/>
+                            <rect x="40" y="42" width="8" height="6" fill="#039BE5"/>
+                            <path d="M32 36 V 40 H 20 V 42 M 32 40 V 42 M 32 40 H 44 V 42" stroke="#039BE5" stroke-width="1" fill="none"/>
+                        </svg>
+                    </div>
+                    <span class="cat-label-grid">SEO & Tiếp thị</span>
+                </div>
+
+                <!-- 5. Tài chính & Kế toán (Bank) -->
+                <div class="cat-grid-item">
+                    <div class="cat-icon-large">
+                        <svg viewBox="0 0 64 64">
+                            <path d="M32 10 L14 20 L50 20 Z" fill="white" stroke="#37474F" stroke-width="2"/>
+                            <rect x="16" y="20" width="32" height="4" fill="#37474F"/>
+                            <rect x="18" y="24" width="4" height="16" fill="#B0BEC5" stroke="#37474F" stroke-width="1"/>
+                            <rect x="26" y="24" width="4" height="16" fill="#B0BEC5" stroke="#37474F" stroke-width="1"/>
+                            <rect x="34" y="24" width="4" height="16" fill="#B0BEC5" stroke="#37474F" stroke-width="1"/>
+                            <rect x="42" y="24" width="4" height="16" fill="#B0BEC5" stroke="#37474F" stroke-width="1"/>
+                            <rect x="14" y="40" width="36" height="4" fill="#37474F"/>
+                            <text x="32" y="18" text-anchor="middle" font-size="8" fill="#0288D1">$</text>
+                        </svg>
+                    </div>
+                    <span class="cat-label-grid">Tài chính & Kế toán</span>
+                </div>
+
+                <!-- 6. Phát triển nhân sự (Chart + Person) -->
+                <div class="cat-grid-item">
+                    <div class="cat-icon-large">
+                        <svg viewBox="0 0 64 64">
+                            <rect x="14" y="20" width="4" height="20" fill="#00BCD4"/>
+                            <rect x="20" y="10" width="4" height="30" fill="#FFC107"/>
+                            <rect x="26" y="25" width="4" height="15" fill="#F44336"/>
+                            <!-- Person -->
+                            <circle cx="46" cy="30" r="6" fill="#FFCC80"/>
+                            <path d="M36 46 Q 46 46 56 46 L 56 50 L 36 50 Z" fill="#37474F"/>
+                            <!-- Sparkle -->
+                            <path d="M50 15 L52 10 L54 15 L59 17 L54 19 L52 24 L50 19 L45 17 Z" fill="#29B6F6"/>
+                            <path d="M15 46 L17 42 L19 46 L24 48 L19 50 L17 54 L15 50 L10 48 Z" fill="#29B6F6"/>
+                        </svg>
+                    </div>
+                    <span class="cat-label-grid">Phát triển nhân sự</span>
+                </div>
+
+                <!-- 7. Năng suất văn phòng (Gear) -->
+                <div class="cat-grid-item">
+                    <div class="cat-icon-large">
+                        <svg viewBox="0 0 64 64">
+                            <circle cx="32" cy="32" r="12" stroke="#039BE5" stroke-width="4" fill="white"/>
+                            <path d="M32 16 V 20 M 32 44 V 48 M 16 32 H 20 M 44 32 H 48 M 22 22 L 25 25 M 39 39 L 42 42 M 22 42 L 25 39 M 39 25 L 42 22" stroke="#039BE5" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="40" cy="40" r="6" fill="#FFC107" stroke="#333" stroke-width="1"/>
+                            <path d="M40 40 L40 37" stroke="#333" stroke-width="1"/>
+                        </svg>
+                    </div>
+                    <span class="cat-label-grid">Năng suất văn phòng</span>
+                </div>
+
+                <!-- 8. Quản lý nhân sự (People + Search) -->
+                <div class="cat-grid-item">
+                    <div class="cat-icon-large">
+                        <svg viewBox="0 0 64 64">
+                            <!-- People Background -->
+                            <circle cx="20" cy="28" r="4" fill="#3F51B5"/>
+                            <path d="M14 40 Q 20 36 26 40" stroke="#3F51B5" stroke-width="3" fill="none"/>
+                            <circle cx="44" cy="28" r="4" fill="#3F51B5"/>
+                            <path d="M38 40 Q 44 36 50 40" stroke="#3F51B5" stroke-width="3" fill="none"/>
+                            <!-- Search overlay -->
+                            <circle cx="32" cy="40" r="10" stroke="#1A237E" stroke-width="3" fill="white"/>
+                            <circle cx="32" cy="38" r="3" fill="#1A237E"/>
+                            <path d="M26 46 Q 32 44 38 46" stroke="#1A237E" stroke-width="2" fill="none"/>
+                            <line x1="39" y1="47" x2="46" y2="54" stroke="#1A237E" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <span class="cat-label-grid">Quản lý nhân sự</span>
+                </div>
+
+            </div>
+            
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 17 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 18 START: SEARCH HISTORY
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-18">
+            
+            <!-- Status Bar -->
+            <div class="status-bar" style="background:transparent;">
+                <span>9:41</span>
+                <div class="status-icons"><div class="wifi"></div><div class="battery"></div></div>
+            </div>
+
+            <!-- Header -->
+            <div class="header-row">
+                <button class="btn-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <span class="header-title-text">Tìm kiếm</span>
+            </div>
+
+            <!-- Search Bar (Tái sử dụng từ Interface 17) -->
+            <div class="search-clean-wrapper">
+                <div class="search-box-blue-btn">
+                    <div style="margin-right: 10px; display:flex; align-items:center; color:#333;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                    <!-- Placeholder mô phỏng text đã nhập -->
+                    <input type="text" placeholder="Thiết kế đồ họa" style="color: #999;"> 
+                    <div class="btn-search-square">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List Header -->
+            <div class="recent-header">
+                <span class="recent-title">Tìm kiếm gần đây</span>
+                <a href="#" class="view-all-link">XEM TẤT CẢ <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left:3px;"><polyline points="9 18 15 12 9 6"></polyline></svg></a>
+            </div>
+
+            <!-- History List -->
+            <div class="recent-list">
+                
+                <div class="recent-item">
+                    <span>Thiết kế 3D</span>
+                    <button class="btn-remove-x">X</button>
+                </div>
+
+                <div class="recent-item">
+                    <span>Thiết kế đồ họa</span>
+                    <button class="btn-remove-x">X</button>
+                </div>
+
+                <div class="recent-item">
+                    <span>Lập trình</span>
+                    <button class="btn-remove-x">X</button>
+                </div>
+
+                <div class="recent-item">
+                    <span>SEO & Tiếp thị</span>
+                    <button class="btn-remove-x">X</button>
+                </div>
+
+                <div class="recent-item">
+                    <span>Phát triển Web</span>
+                    <button class="btn-remove-x">X</button>
+                </div>
+
+                <div class="recent-item">
+                    <span>Năng suất văn phòng</span>
+                    <button class="btn-remove-x">X</button>
+                </div>
+
+                <div class="recent-item">
+                    <span>Phát triển nhân sự</span>
+                    <button class="btn-remove-x">X</button>
+                </div>
+
+                <div class="recent-item">
+                    <span>Tài chính & Kế toán</span>
+                    <button class="btn-remove-x">X</button>
+                </div>
+
+                <div class="recent-item">
+                    <span>Quản lý nhân sự</span>
+                    <button class="btn-remove-x">X</button>
+                </div>
+
+            </div>
+
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 18 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 19 START: POPULAR COURSES LIST + NAV
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-19">
+            
+            <!-- Status Bar -->
+            <div class="status-bar" style="background:transparent;">
+                <span>9:41</span>
+                <div class="status-icons"><div class="wifi"></div><div class="battery"></div></div>
+            </div>
+
+            <!-- Header -->
+            <div class="header-row" style="margin-bottom: 15px;">
+                <button class="btn-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <span class="header-title-text">Khóa học phổ biến</span>
+            </div>
+
+            <!-- Filter Tabs (Horizontal Scroll) -->
+            <div class="horz-scroll" style="padding-left: 20px; margin-bottom: 20px; flex-shrink: 0;">
+                <div class="tag-pill active">Tất cả</div>
+                <div class="tag-pill inactive">Thiết kế đồ họa</div>
+                <div class="tag-pill inactive">Thiết kế 3D</div>
+                <div class="tag-pill inactive">Nghệ thuật</div>
+            </div>
+
+            <!-- Vertical Course List -->
+            <div class="course-list-vertical">
+                
+                <!-- Item 1: Graphic Design -->
+                <div class="course-card-horz">
+                    <div class="cch-img">
+                        <!-- Laptop SVG -->
+                        <svg viewBox="0 0 130 130" preserveAspectRatio="none">
+                            <rect width="100%" height="100%" fill="#CFD8DC"/>
+                            <rect x="20" y="30" width="90" height="60" rx="2" fill="#37474F"/>
+                            <rect x="25" y="35" width="80" height="50" fill="#BBDEFB"/>
+                            <text x="65" y="65" font-size="12" text-anchor="middle" fill="#0277BD" font-weight="bold">DESIGN</text>
+                            <path d="M15 95 L115 95 L105 90 L25 90 Z" fill="#546E7A"/>
+                        </svg>
+                    </div>
+                    <div class="cch-content">
+                        <svg class="cch-bookmark" viewBox="0 0 24 24" fill="#009688" stroke="none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                        <div class="cch-cat">Thiết kế đồ họa</div>
+                        <h4 class="cch-title">Thiết kế đồ họa nâng cao</h4>
+                        <div class="price-row">
+                            <span class="price-current">$28</span>
+                            <span class="price-old">$42</span>
+                        </div>
+                        <div class="stats-row">
+                            <span><span style="color:#FFC107">★</span> 4.2</span>
+                            <span style="color:#ccc">|</span>
+                            <span>7830 Std</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2: Future Tech -->
+                <div class="course-card-horz">
+                    <div class="cch-img">
+                        <!-- Purple Abstract SVG -->
+                        <svg viewBox="0 0 130 130" preserveAspectRatio="none">
+                            <rect width="100%" height="100%" fill="#311B92"/>
+                            <circle cx="65" cy="65" r="40" stroke="#7E57C2" stroke-width="2" fill="none"/>
+                            <line x1="20" y1="110" x2="110" y2="20" stroke="#B39DDB" stroke-width="2"/>
+                            <text x="65" y="65" font-size="10" text-anchor="middle" fill="white">FUTURE</text>
+                        </svg>
+                    </div>
+                    <div class="cch-content">
+                        <!-- Outline Bookmark -->
+                        <svg class="cch-bookmark" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                        <div class="cch-cat">Thiết kế đồ họa</div>
+                        <h4 class="cch-title">Thiết kế quảng cáo</h4>
+                        <div class="price-row">
+                            <span class="price-current">$42</span>
+                            <span class="price-old">$61</span>
+                        </div>
+                        <div class="stats-row">
+                            <span><span style="color:#FFC107">★</span> 3.9</span>
+                            <span style="color:#ccc">|</span>
+                            <span>12680 Std</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3: Coding -->
+                <div class="course-card-horz">
+                    <div class="cch-img">
+                        <!-- Coding Hands SVG -->
+                        <svg viewBox="0 0 130 130" preserveAspectRatio="none">
+                            <rect width="100%" height="100%" fill="#424242"/>
+                            <rect x="20" y="20" width="90" height="50" fill="#212121" stroke="#616161"/>
+                            <rect x="25" y="25" width="80" height="40" fill="#000"/>
+                            <rect x="30" y="30" width="30" height="4" fill="#4CAF50"/>
+                            <path d="M40 80 Q 50 100 60 80" stroke="#FFAB91" stroke-width="8" fill="none"/>
+                        </svg>
+                    </div>
+                    <div class="cch-content">
+                        <svg class="cch-bookmark" viewBox="0 0 24 24" fill="#009688" stroke="none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                        <div class="cch-cat">Lập trình</div>
+                        <h4 class="cch-title">Thiết kế đồ họa nâng cao</h4>
+                        <div class="price-row">
+                            <span class="price-current">$37</span>
+                            <span class="price-old">$41</span>
+                        </div>
+                        <div class="stats-row">
+                            <span><span style="color:#FFC107">★</span> 4.2</span>
+                            <span style="color:#ccc">|</span>
+                            <span>990 Std</span>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Item 4: Web Dev -->
+                 <div class="course-card-horz">
+                    <div class="cch-img">
+                        <!-- Network SVG -->
+                        <svg viewBox="0 0 130 130" preserveAspectRatio="none">
+                            <rect width="100%" height="100%" fill="#E0F7FA"/>
+                            <circle cx="65" cy="65" r="20" stroke="#00BCD4" stroke-width="2" fill="white"/>
+                            <text x="65" y="68" font-size="10" text-anchor="middle" fill="#006064" font-weight="bold">WEB</text>
+                            <circle cx="30" cy="30" r="5" fill="#00BCD4"/>
+                            <circle cx="100" cy="30" r="5" fill="#00BCD4"/>
+                            <circle cx="100" cy="100" r="5" fill="#00BCD4"/>
+                            <line x1="45" y1="45" x2="85" y2="85" stroke="#00BCD4"/>
+                        </svg>
+                    </div>
+                    <div class="cch-content">
+                        <svg class="cch-bookmark" viewBox="0 0 24 24" fill="#009688" stroke="none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                        <div class="cch-cat">Phát triển web</div>
+                        <h4 class="cch-title">Khái niệm nhà phát triển web..</h4>
+                        <div class="price-row">
+                            <span class="price-current">$56</span>
+                            <span class="price-old">$71</span>
+                        </div>
+                        <div class="stats-row">
+                            <span><span style="color:#FFC107">★</span> 4.9</span>
+                            <span style="color:#ccc">|</span>
+                            <span>14580 Std</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <!-- Home (Active) -->
+                <div class="nav-item active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span class="nav-label">TRANG CHỦ</span>
+                </div>
+                <!-- Courses -->
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span class="nav-label">KHÓA HỌC</span>
+                </div>
+                <!-- Messages -->
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                    <span class="nav-label">TIN NHẮN</span>
+                </div>
+                <!-- Transactions -->
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                    <span class="nav-label">GIAO DỊCH</span>
+                </div>
+                <!-- Profile -->
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span class="nav-label">HỒ SƠ</span>
+                </div>
+            </div>
+            
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 19 END
+         ======================================================= -->
+    <!-- =======================================================
+         INTERFACE 20 START: TOP MENTORS LIST (FINAL)
+         ======================================================= -->
+    <div class="mobile-frame">
+        <div class="screen-20">
+            
+            <!-- Status Bar -->
+            <div class="status-bar" style="background:transparent;">
+                <span>9:41</span>
+                <div class="status-icons"><div class="wifi"></div><div class="battery"></div></div>
+            </div>
+
+            <!-- Header -->
+            <div class="header-row" style="padding-bottom: 10px;">
+                <button class="btn-back">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2B5B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </button>
+                <span class="header-title-text">Cố vấn tiêu biểu</span>
+            </div>
+
+            <!-- Scrollable List -->
+            <div class="mentor-list-container">
+                
+                <!-- Mentor 1 -->
+                <div class="mentor-row">
+                    <div class="mentor-avatar-blue">
+                        <svg class="user-icon-silhouette" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="m-info">
+                        <span class="m-name">Nguyễn Văn A</span>
+                        <span class="m-job">Thiết kế 3D</span>
+                    </div>
+                </div>
+
+                <!-- Mentor 2 -->
+                <div class="mentor-row">
+                    <div class="mentor-avatar-blue">
+                        <svg class="user-icon-silhouette" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="m-info">
+                        <span class="m-name">Nguyễn Văn B</span>
+                        <span class="m-job">Nghệ thuật & Nhân văn</span>
+                    </div>
+                </div>
+
+                <!-- Mentor 3 -->
+                <div class="mentor-row">
+                    <div class="mentor-avatar-blue">
+                        <svg class="user-icon-silhouette" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="m-info">
+                        <span class="m-name">Nguyễn Văn C</span>
+                        <span class="m-job">Phát triển nhân sự</span>
+                    </div>
+                </div>
+
+                <!-- Mentor 4 -->
+                <div class="mentor-row">
+                    <div class="mentor-avatar-blue">
+                        <svg class="user-icon-silhouette" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="m-info">
+                        <span class="m-name">Nguyễn Văn D</span>
+                        <span class="m-job">SEO & Tiếp thị</span>
+                    </div>
+                </div>
+
+                <!-- Mentor 5 -->
+                <div class="mentor-row">
+                    <div class="mentor-avatar-blue">
+                        <svg class="user-icon-silhouette" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="m-info">
+                        <span class="m-name">Nguyễn Văn E</span>
+                        <span class="m-job">Năng suất văn phòng</span>
+                    </div>
+                </div>
+
+                <!-- Mentor 6 -->
+                <div class="mentor-row">
+                    <div class="mentor-avatar-blue">
+                        <svg class="user-icon-silhouette" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="m-info">
+                        <span class="m-name">Nguyễn Văn F</span>
+                        <span class="m-job">Phát triển web</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Navigation (Reuse from Interface 19) -->
+            <div class="bottom-nav">
+                <!-- Home Active -->
+                <div class="nav-item active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span class="nav-label">TRANG CHỦ</span>
+                </div>
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span class="nav-label">KHÓA HỌC</span>
+                </div>
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                    <span class="nav-label">TIN NHẮN</span>
+                </div>
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                    <span class="nav-label">GIAO DỊCH</span>
+                </div>
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span class="nav-label">HỒ SƠ</span>
+                </div>
+            </div>
+            
+            <div class="home-indicator"></div>
+
+        </div>
+    </div>
+    <!-- =======================================================
+         INTERFACE 20 END
+         ======================================================= -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+
+            const frames = Array.from(document.querySelectorAll('.mobile-frame'));
+            const screenMap = new Map();
+
+            frames.forEach(frame => {
+                const screenContainer = frame.firstElementChild;
+                if (!screenContainer) {
+                    return;
+                }
+                const screenClass = Array.from(screenContainer.classList).find(cls => /^screen-\d+$/.test(cls));
+                if (!screenClass) {
+                    return;
+                }
+                frame.dataset.screen = screenClass;
+                screenMap.set(screenClass, frame);
+            });
+
+            let currentScreen = null;
+            let currentFrame = null;
+            const historyStack = [];
+
+            const setActive = (screenName, options = {}) => {
+                const nextFrame = screenMap.get(screenName);
+                if (!nextFrame || currentScreen === screenName) {
+                    return;
+                }
+                const remember = options.remember !== false;
+                if (currentScreen && remember) {
+                    historyStack.push(currentScreen);
+                }
+                if (currentFrame) {
+                    currentFrame.classList.remove('is-active');
+                }
+                nextFrame.classList.add('is-active');
+                currentFrame = nextFrame;
+                currentScreen = screenName;
+            };
+
+            const goBack = () => {
+                if (!historyStack.length) {
+                    return;
+                }
+                const previousScreen = historyStack.pop();
+                setActive(previousScreen, { remember: false });
+            };
+
+            const navBindings = [
+                { selector: '.screen-01 .screen-01__start-btn', target: 'screen-02' },
+                { selector: '.screen-02 .btn-next', target: 'screen-03' },
+                { selector: '.screen-02 .btn-skip', target: 'screen-05' },
+                { selector: '.screen-03 .btn-next', target: 'screen-04' },
+                { selector: '.screen-03 .btn-skip', target: 'screen-05' },
+                { selector: '.screen-04 .btn-get-started', target: 'screen-05' },
+                { selector: '.screen-04 .btn-skip', target: 'screen-05' },
+                { selector: '.screen-05 .btn-primary-large', target: 'screen-07' },
+                { selector: '.screen-05 .social-btn', target: 'screen-07' },
+                { selector: '.screen-05 .footer-link-text a', target: 'screen-06' },
+                { selector: '.screen-06 .btn-signup', target: 'screen-08' },
+                { selector: '.screen-06 .footer-center a', target: 'screen-07' },
+                { selector: '.screen-07 .btn-signup', target: 'screen-08' },
+                { selector: '.screen-07 .forgot-pass-link', target: 'screen-12' },
+                { selector: '.screen-07 .footer-center a', target: 'screen-06' },
+                { selector: '.screen-08 .btn-signup', target: 'screen-09' },
+                { selector: '.screen-09 .btn-signup', target: 'screen-10' },
+                { selector: '.screen-10 .btn-primary-half', target: 'screen-11' },
+                { selector: '.screen-10 .btn-secondary', target: 'screen-16' },
+                { selector: '.screen-11 .modal-continue-btn', target: 'screen-16', remember: false },
+                { selector: '.screen-12 .btn-signup', target: 'screen-13' },
+                { selector: '.screen-13 .btn-signup', target: 'screen-14' },
+                { selector: '.screen-14 .btn-signup', target: 'screen-15' },
+                { selector: '.screen-15 .modal-continue-btn', target: 'screen-07', remember: false }
+            ];
+
+            navBindings.forEach(({ selector, target, remember }) => {
+                document.querySelectorAll(selector).forEach(node => {
+                    node.dataset.target = target;
+                    if (remember === false) {
+                        node.dataset.remember = 'false';
+                    }
+                });
+            });
+
+            const homeSecTargets = ['screen-17', 'screen-19', 'screen-20'];
+            document.querySelectorAll('.screen-16 .sec-link').forEach((link, index) => {
+                const target = homeSecTargets[index];
+                if (target) {
+                    link.dataset.target = target;
+                }
+            });
+
+            const navTargets = ['screen-16', 'screen-19', 'screen-18', 'screen-17', 'screen-20'];
+            ['.screen-19', '.screen-20'].forEach(scope => {
+                const items = document.querySelectorAll(`${scope} .nav-item`);
+                items.forEach((item, index) => {
+                    const target = navTargets[index] || navTargets[0];
+                    item.dataset.target = target;
+                    item.dataset.remember = 'false';
+                });
+            });
+
+            document.querySelectorAll('.btn-back').forEach(btn => {
+                btn.dataset.action = 'back';
+            });
+
+            document.body.addEventListener('click', event => {
+                const trigger = event.target.closest('[data-target],[data-action]');
+                if (!trigger) {
+                    return;
+                }
+                event.preventDefault();
+                if (trigger.dataset.action === 'back') {
+                    goBack();
+                    return;
+                }
+                const targetScreen = trigger.dataset.target;
+                if (!targetScreen) {
+                    return;
+                }
+                const remember = trigger.dataset.remember !== 'false';
+                setActive(targetScreen, { remember });
+            });
+
+            const defaultScreen = screenMap.has('screen-01')
+                ? 'screen-01'
+                : (frames[0] ? frames[0].dataset.screen : undefined);
+            if (defaultScreen) {
+                body.classList.add('js-enabled');
+                setActive(defaultScreen, { remember: false });
+            } else {
+                body.classList.remove('js-enabled');
+            }
+        });
+    </script>
+</body>
+</html>
