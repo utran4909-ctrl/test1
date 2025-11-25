@@ -1,5 +1,6 @@
 // ==============================================================================
 // SCRIPT AFTER EFFECTS HOÀN CHỈNH - CÔNG CỤ XỬ LÝ TEXT LAYER
+// Phiên bản 2.7: Bổ sung tính năng giảm khoảng cách dòng (Line Spacing/Leading).
 // Phiên bản 2.6: Bổ sung tính năng Dịch sang phải (Shift Right).
 // Phiên bản 2.5: Cải tiến chế độ ngắt từ Trái/Phải - Tự động xóa khoảng trắng thừa.
 // Phiên bản 2.4: Bổ sung tính năng ngắt dòng theo ký tự phân cách.
@@ -25,7 +26,7 @@ function processRawData(rawText, selectedLineIndex) {
 }
 
 // --- HÀM LOGIC 2: applyPerLineStyling (Áp dụng định dạng cho từng dòng) ---
-function applyPerLineStyling(currentLayer, newTextWithBreak, sizeLine1, sizeLine2) {
+function applyPerLineStyling(currentLayer, newTextWithBreak, sizeLine1, sizeLine2, leadingReduction) {
     if (!currentLayer || !(currentLayer instanceof TextLayer)) { return false; }
     try {
         var sourceTextProp = currentLayer.property("Source Text");
@@ -35,15 +36,29 @@ function applyPerLineStyling(currentLayer, newTextWithBreak, sizeLine1, sizeLine
         var lineBreakIndex = fullText.indexOf('\r');
         if (lineBreakIndex === -1) {
             textDocument.fontSize = sizeLine1;
+            sourceTextProp.setValue(textDocument);
         } else {
-            var totalLength = fullText.length;
+            // Bước 1: Áp dụng giảm khoảng cách dòng (leading) TRƯỚC
+            if (leadingReduction && leadingReduction !== 0) {
+                var currentLeading = textDocument.leading;
+                textDocument.leading = currentLeading - leadingReduction;
+            }
+            // Commit text và leading trước
+            sourceTextProp.setValue(textDocument);
+            
+            // Bước 2: Lấy lại textDocument mới và áp dụng font size cho từng dòng
+            textDocument = sourceTextProp.value;
+            var totalLength = textDocument.text.length;
+            lineBreakIndex = textDocument.text.indexOf('\r');
+            
             var line1Range = textDocument.characterRange(0, lineBreakIndex);
             line1Range.fontSize = sizeLine1;
             var line2Start = lineBreakIndex + 1;
             var line2Range = textDocument.characterRange(line2Start, totalLength);
             line2Range.fontSize = sizeLine2;
+            
+            sourceTextProp.setValue(textDocument);
         }
-        sourceTextProp.setValue(textDocument);
         return true;
     } catch (e) { return false; }
 }
@@ -138,7 +153,7 @@ function modifyProjectLayers(config) {
                     try {
                         if (config.lineBreak.enabled) {
                             var newTextWithBreak = addLineBreak(matchedPattern, config.lineBreak);
-                            applyPerLineStyling(currentLayer, newTextWithBreak, config.lineBreak.size1, config.lineBreak.size2);
+                            applyPerLineStyling(currentLayer, newTextWithBreak, config.lineBreak.size1, config.lineBreak.size2, config.lineBreak.leadingReduction);
                         } else {
                             var textDocument = sourceTextProp.value;
                             textDocument.fontSize = textDocument.fontSize + config.increase;
@@ -179,7 +194,7 @@ function modifyProjectLayers(config) {
 
 // --- GIAO DIỆN NGƯỜI DÙNG (UI) ---
 (function() {
-    var myWindow = new Window('palette', 'Công Cụ Xử Lý Text Layer v2.6', undefined);
+    var myWindow = new Window('palette', 'Công Cụ Xử Lý Text Layer v2.7', undefined);
     myWindow.orientation = 'column'; myWindow.alignChildren = 'fill';
 
     var inputPanel = myWindow.add('panel', undefined, '1. Dữ Liệu Đầu Vào');
@@ -261,6 +276,11 @@ function modifyProjectLayers(config) {
     perLineSizeGroup.add('statictext', undefined, '   Cỡ chữ Dòng 2:');
     var sizeLine2EditText = perLineSizeGroup.add('edittext', [0, 0, 50, 20], '30');
 
+    var lineSpacingGroup = lineBreakOptionsGroup.add('group', undefined);
+    lineSpacingGroup.orientation = 'row';
+    lineSpacingGroup.add('statictext', undefined, 'Giảm khoảng cách dòng:');
+    var lineSpacingReductionEditText = lineSpacingGroup.add('edittext', [0, 0, 50, 20], '0');
+
     lineBreakOptionsGroup.enabled = false;
     
     // Logic tương tác UI ban đầu
@@ -324,9 +344,10 @@ function modifyProjectLayers(config) {
         var spaceOccurrence = spaceOccurrenceDropdown.selection ? (spaceOccurrenceDropdown.selection.index + 1) : 1;
         var sizeLine1 = parseInt(sizeLine1EditText.text);
         var sizeLine2 = parseInt(sizeLine2EditText.text);
+        var lineSpacingReduction = parseInt(lineSpacingReductionEditText.text);
         
         // Validation có kiểm tra shiftRightAmount
-        if (isNaN(increaseAmount) || isNaN(shiftUpAmount) || isNaN(shiftRightAmount) || isNaN(breakFromLeft) || isNaN(breakFromRight) || isNaN(sizeLine1) || isNaN(sizeLine2)) {
+        if (isNaN(increaseAmount) || isNaN(shiftUpAmount) || isNaN(shiftRightAmount) || isNaN(breakFromLeft) || isNaN(breakFromRight) || isNaN(sizeLine1) || isNaN(sizeLine2) || isNaN(lineSpacingReduction)) {
             alert("Lỗi: Vui lòng chỉ nhập số hợp lệ vào tất cả các ô tùy chỉnh."); return;
         }
 
@@ -372,7 +393,8 @@ function modifyProjectLayers(config) {
                 delimiter: breakDelimiter,
                 spaceOccurrence: spaceOccurrence,
                 size1: sizeLine1,
-                size2: sizeLine2
+                size2: sizeLine2,
+                leadingReduction: lineSpacingReduction
             }
         };
 
