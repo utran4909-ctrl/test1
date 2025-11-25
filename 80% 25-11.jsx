@@ -36,21 +36,29 @@ function applyPerLineStyling(currentLayer, newTextWithBreak, sizeLine1, sizeLine
         var lineBreakIndex = fullText.indexOf('\r');
         if (lineBreakIndex === -1) {
             textDocument.fontSize = sizeLine1;
+            sourceTextProp.setValue(textDocument);
         } else {
-            var totalLength = fullText.length;
+            // Bước 1: Áp dụng giảm khoảng cách dòng (leading) TRƯỚC
+            if (leadingReduction && leadingReduction !== 0) {
+                var currentLeading = textDocument.leading;
+                textDocument.leading = currentLeading - leadingReduction;
+            }
+            // Commit text và leading trước
+            sourceTextProp.setValue(textDocument);
+            
+            // Bước 2: Lấy lại textDocument mới và áp dụng font size cho từng dòng
+            textDocument = sourceTextProp.value;
+            var totalLength = textDocument.text.length;
+            lineBreakIndex = textDocument.text.indexOf('\r');
+            
             var line1Range = textDocument.characterRange(0, lineBreakIndex);
             line1Range.fontSize = sizeLine1;
             var line2Start = lineBreakIndex + 1;
             var line2Range = textDocument.characterRange(line2Start, totalLength);
             line2Range.fontSize = sizeLine2;
             
-            // Áp dụng giảm khoảng cách dòng (leading) nếu có
-            if (leadingReduction && leadingReduction !== 0) {
-                var currentLeading = textDocument.leading;
-                textDocument.leading = currentLeading - leadingReduction;
-            }
+            sourceTextProp.setValue(textDocument);
         }
-        sourceTextProp.setValue(textDocument);
         return true;
     } catch (e) { return false; }
 }
