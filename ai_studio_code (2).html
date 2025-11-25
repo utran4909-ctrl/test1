@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Mặt Trời 3D - Three.js</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Ẩn thanh cuộn */
+            background-color: #000;
+            font-family: Arial, sans-serif;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            pointer-events: none; /* Để chuột có thể click xuyên qua */
+            user-select: none;
+        }
+        h1 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+            color: #ffcc00;
+        }
+        p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+    </style>
+    
+    <!-- Import Map để load Three.js từ CDN mà không cần cài đặt -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div id="info">
+        <h1>Hệ Mặt Trời 3D</h1>
+        <p>Chuột trái: Xoay | Chuột phải: Di chuyển | Cuộn: Phóng to/Thu nhỏ</p>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // --- 1. CẤU HÌNH CƠ BẢN (SCENE, CAMERA, RENDERER) ---
+        const scene = new THREE.Scene();
+        
+        // Camera (Góc nhìn, Tỷ lệ khung hình, Gần nhất, Xa nhất)
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+        camera.position.set(-90, 140, 140); // Đặt vị trí camera ban đầu
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio); // Để hiển thị sắc nét trên màn hình retina
+        document.body.appendChild(renderer.domElement);
+
+        // Điều khiển camera (OrbitControls)
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // Hiệu ứng quán tính mượt mà
+        controls.dampingFactor = 0.05;
+
+        // --- 2. ÁNH SÁNG VÀ MÔI TRƯỜNG ---
+        
+        // Ánh sáng môi trường (Ambient Light) - Để các vùng tối không đen kịt
+        const ambientLight = new THREE.AmbientLight(0x333333);
+        scene.add(ambientLight);
+
+        // Ánh sáng điểm (Point Light) - Giả lập ánh sáng mặt trời tỏa ra từ tâm
+        const sunLight = new THREE.PointLight(0xFFFFFF, 2, 3000); // Màu, cường độ, khoảng cách
+        scene.add(sunLight);
+
+        // Tạo nền sao (Stars)
+        function createStars() {
+            const starGeometry = new THREE.BufferGeometry();
+            const starMaterial = new THREE.PointsMaterial({ color: 0xFFFFFF });
+            const starVertices = [];
+            for (let i = 0; i < 5000; i++) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                starVertices.push(x, y, z);
+            }
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+        }
+        createStars();
+
+        // --- 3. TẠO CÁC THIÊN THỂ ---
+
+        const textureLoader = new THREE.TextureLoader();
+
+        // Hàm tạo hành tinh
+        function createPlanet(size, color, position, ring) {
+            // Vật liệu (MeshStandardMaterial phản ứng với ánh sáng)
+            const material = new THREE.MeshStandardMaterial({ 
+                color: color,
+                roughness: 0.8 // Độ nhám
+            });
+            
+            const geometry = new THREE.SphereGeometry(size, 32, 32);
+            const mesh = new THREE.Mesh(geometry, material);
+            
+            // Tạo một Object cha (obj) để làm tâm xoay quanh mặt trời
+            const obj = new THREE.Object3D();
+            obj.add(mesh); // Gắn hành tinh vào object cha
+            
+            // Di chuyển hành tinh ra xa tâm (bán kính quỹ đạo)
+            mesh.position.x = position;
+
+            // Nếu có vành đai (như Sao Thổ)
+            if (ring) {
+                const ringGeo = new THREE.RingGeometry(ring.inner, ring.outer, 32);
+                const ringMat = new THREE.MeshBasicMaterial({ 
+                    color: ring.color, 
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.7
+                });
+                const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+                ringMesh.rotation.x = -0.5 * Math.PI; // Xoay ngang
+                obj.add(ringMesh);
+                ringMesh.position.x = position; // Đặt cùng vị trí với hành tinh
+            }
+
+            scene.add(obj);
+            
+            return { mesh, obj }; // Trả về mesh (để xoay tự thân) và obj (để xoay quanh mặt trời)
+        }
+
+        // --- MẶT TRỜI ---
+        const sunGeo = new THREE.SphereGeometry(16, 32, 32);
+        // MeshBasicMaterial không chịu ảnh hưởng ánh sáng (tự phát sáng)
+        const sunMat = new THREE.MeshBasicMaterial({ color: 0xFFCC00 }); 
+        const sun = new THREE.Mesh(sunGeo, sunMat);
+        scene.add(sun);
+
+        // --- CÁC HÀNH TINH (Kích thước và khoảng cách đã được điều chỉnh tỷ lệ tượng trưng) ---
+        
+        // 1. Sao Thủy (Mercury)
+        const mercury = createPlanet(3.2, 0xA5A5A5, 28);
+        
+        // 2. Sao Kim (Venus)
+        const venus = createPlanet(5.8, 0xFFC987, 44);
+        
+        // 3. Trái Đất (Earth)
+        const earth = createPlanet(6, 0x2233FF, 62);
+        
+        // Tạo Mặt Trăng cho Trái Đất
+        const moonGeo = new THREE.SphereGeometry(1.5, 32, 32);
+        const moonMat = new THREE.MeshStandardMaterial({ color: 0xDDDDDD });
+        const moon = new THREE.Mesh(moonGeo, moonMat);
+        earth.mesh.add(moon); // Gắn mặt trăng vào mesh Trái Đất
+        moon.position.x = 10; // Khoảng cách từ mặt trăng đến Trái Đất
+
+        // 4. Sao Hỏa (Mars)
+        const mars = createPlanet(4, 0xFF4500, 78);
+
+        // 5. Sao Mộc (Jupiter)
+        const jupiter = createPlanet(12, 0xC99039, 100);
+
+        // 6. Sao Thổ (Saturn) - Có vành đai
+        const saturn = createPlanet(10, 0xEAD6B8, 138, { inner: 10, outer: 20, color: 0xCDBA96 });
+
+        // 7. Sao Thiên Vương (Uranus)
+        const uranus = createPlanet(7, 0x88CCFF, 176, { inner: 7, outer: 12, color: 0x88CCFF });
+
+        // 8. Sao Hải Vương (Neptune)
+        const neptune = createPlanet(7, 0x3344AA, 200);
+
+        // --- 4. VÒNG LẶP ANIMATION (CHUYỂN ĐỘNG) ---
+        
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Tự xoay quanh trục (Self rotation)
+            sun.rotation.y += 0.004;
+            mercury.mesh.rotation.y += 0.004;
+            venus.mesh.rotation.y += 0.002;
+            earth.mesh.rotation.y += 0.02;
+            mars.mesh.rotation.y += 0.018;
+            jupiter.mesh.rotation.y += 0.04;
+            saturn.mesh.rotation.y += 0.038;
+            uranus.mesh.rotation.y += 0.03;
+            neptune.mesh.rotation.y += 0.032;
+
+            // Xoay quanh mặt trời (Orbit rotation)
+            // Tốc độ điều chỉnh: Càng xa càng chậm
+            mercury.obj.rotation.y += 0.04;
+            venus.obj.rotation.y += 0.015;
+            earth.obj.rotation.y += 0.01;
+            mars.obj.rotation.y += 0.008;
+            jupiter.obj.rotation.y += 0.002;
+            saturn.obj.rotation.y += 0.0009;
+            uranus.obj.rotation.y += 0.0004;
+            neptune.obj.rotation.y += 0.0001;
+
+            // Mặt trăng xoay quanh trái đất
+            // Lưu ý: Do mặt trăng là con của Earth mesh, nó sẽ tự xoay theo trái đất.
+            // Để nó xoay độc lập, ta cần cộng thêm rotation
+            // Tuy nhiên, cách đơn giản ở đây là chỉnh vị trí vì nó gắn vào mesh đang xoay.
+            // Để làm mặt trăng xoay quanh trái đất thực sự độc lập, ta cần một logic phức tạp hơn chút
+            // Nhưng ở mức độ cơ bản, việc Trái đất xoay kéo theo Mặt trăng cũng tạo hiệu ứng quỹ đạo.
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // --- 5. XỬ LÝ KHI THAY ĐỔI KÍCH THƯỚC MÀN HÌNH ---
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Bắt đầu animation
+        animate();
+
+    </script>
+</body>
+</html>
